@@ -412,6 +412,7 @@ function render_workspace(frm) {
     <input type="number" class="nl-gi" data-f="nl_default_markup" value="${flt(frm.doc.nl_default_markup)||1.5}" step="0.05"></div>
   <button class="nl-add-btn" id="nl-add-btn">+ Add Row</button>
   <button class="nl-ibtn" id="nl-fs-btn">&#9974; Expand</button>
+  <button class="nl-ibtn" id="nl-excel-btn">&#8595; Excel</button>
   <button class="nl-std-btn" id="nl-deactivate-btn">&#8592; Standard View</button>
 </div>`;
 
@@ -548,6 +549,12 @@ function setup_events(frm) {
     frm.$wrapper.on("click.nl-ws", "#nl-activate-btn",   () => set_nl_mode(frm, true));
     frm.$wrapper.on("click.nl-ws", "#nl-deactivate-btn", () => set_nl_mode(frm, false));
     frm.$wrapper.on("click.nl-ws", "#nl-add-btn",        () => open_add_dialog(frm));
+
+    frm.$wrapper.on("click.nl-ws", "#nl-excel-btn", function() {
+        window.location.href = frappe.urllib.get_full_url(
+            `/api/method/newline.newline.api.download_costing_excel?quotation=${encodeURIComponent(frm.doc.name)}`
+        );
+    });
 
     frm.$wrapper.on("click.nl-ws", "#nl-fs-btn", function() {
         const ws  = frm.$wrapper.find("#nl-ws-root");
