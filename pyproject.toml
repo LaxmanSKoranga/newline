@@ -1,0 +1,30 @@
+[project]
+name = "newline"
+authors = [
+    { name = "Newline MEA", email = "support@newlinemea.com"}
+]
+description = "Lighting product data management for ERPNext"
+requires-python = ">=3.10"
+readme = "README.md"
+dynamic = ["version"]
+dependencies = [
+    # "frappe~=15.0.0" # Installed and managed by bench.
+]
+
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.bench.dev-dependencies]
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["F", "E", "W", "I", "UP", "B", "RUF"]
+ignore = ["E501", "F401", "W191", "E101"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "tab"

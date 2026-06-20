@@ -1,0 +1,243 @@
+{% set gt = namespace(exw=0, land=0, sell=0) %}
+{% for line in doc.nl_quotation_lines %}
+  {% if line.nl_row_type == "Main Item" %}
+    {% set gt.exw  = gt.exw  + (line.nl_tot_exw           or 0) %}
+    {% set gt.land = gt.land + (line.nl_landed_total_aed   or 0) %}
+    {% set gt.sell = gt.sell + (line.nl_total_sell_aed     or 0) %}
+  {% endif %}
+{% endfor %}
+
+<style>
+  @page { size: A3 landscape; margin: 8mm; }
+  body  { font-family: Arial, sans-serif; font-size: 7pt; color: #222; }
+
+  .hdr        { width:100%; border-collapse:collapse; margin-bottom:6px; }
+  .co-name    { font-size:13pt; font-weight:bold; color:#1a1a3e; }
+  .sheet-title{ font-size:15pt; font-weight:bold; color:#c0392b; text-align:right; }
+
+  /* Exchange rate box */
+  .fx-box     { border:1px solid #999; padding:4px 8px; display:inline-block;
+                font-size:7pt; text-align:right; float:right; }
+  .fx-box th  { background:#1a1a3e; color:#fff; padding:2px 6px; }
+  .fx-box td  { padding:1px 6px; }
+
+  .proj-bar   { background:#1a1a3e; color:#fff; padding:4px 8px;
+                font-size:8pt; font-weight:bold; margin:4px 0; }
+
+  /* Group header */
+  .grp-hdr th { background:#2c3e50; color:#fff; padding:3px 4px; text-align:center;
+                font-size:6.5pt; border:1px solid #111; }
+  .col-hdr th { background:#3d5166; color:#fff; padding:2px 4px; text-align:center;
+                font-size:6pt; border:1px solid #222; white-space:nowrap; }
+
+  .tbl        { width:100%; border-collapse:collapse; }
+  .tbl td     { padding:2px 3px; border:1px solid #ccc; vertical-align:top;
+                font-size:6.5pt; }
+  .main-row td{ background:#fff; }
+  .sub-row td { background:#f5f5f5; color:#555; }
+  .num        { text-align:right; }
+  .ctr        { text-align:center; }
+  .foot td    { background:#1a1a3e; color:#fff; font-weight:bold;
+                padding:3px 4px; border:1px solid #111; font-size:6.5pt; }
+  .img-cell img { max-height:30px; max-width:40px; }
+
+  /* Brand summary */
+  .summary    { margin-top:12px; width:60%; }
+  .summary th { background:#1a1a3e; color:#fff; padding:3px 6px; font-size:7pt;
+                border:1px solid #111; }
+  .summary td { padding:2px 6px; border:1px solid #ccc; font-size:7pt; }
+  .summary .foot td { background:#2c3e50; }
+</style>
+
+<!-- ── Header ───────────────────────────────────────────────── -->
+<table class="hdr">
+  <tr>
+    <td style="width:40%; vertical-align:top;">
+      <div class="co-name">NEWLINE MEA</div>
+      <div style="font-size:7pt; color:#555;">Dubai, UAE &nbsp;|&nbsp; TRN: 100569971400003</div>
+    </td>
+    <td style="width:30%; vertical-align:top; text-align:center;">
+      <table class="fx-box">
+        <tr><th colspan="2">EXCHANGE RATES</th></tr>
+        {% for r in doc.nl_exchange_rates %}
+        <tr><td><strong>{{ r.currency }}</strong></td><td>{{ r.rate }}</td></tr>
+        {% endfor %}
+      </table>
+    </td>
+    <td style="width:30%; vertical-align:top;">
+      <div class="sheet-title">INTERNAL COSTING SHEET</div>
+      <div style="text-align:right; font-size:7.5pt;">
+        <strong>M/S:</strong> {{ doc.customer_name }} &nbsp;
+        <strong>REF:</strong> {{ doc.nl_ref_number or doc.name }}<br>
+        <strong>ATT:</strong> {{ doc.nl_attention or "" }} &nbsp;
+        <strong>DATE:</strong> {{ doc.nl_project_date or doc.transaction_date }}
+      </div>
+    </td>
+  </tr>
+</table>
+
+<div class="proj-bar">PROJECT: {{ doc.nl_project_name or "" }}</div>
+
+<!-- ── Items table ──────────────────────────────────────────── -->
+<table class="tbl">
+  <thead>
+    <!-- Group header row -->
+    <tr class="grp-hdr">
+      <th colspan="9">PROPOSED PRODUCT DETAILS</th>
+      <th colspan="6">EXWORKS</th>
+      <th colspan="3">FREIGHT</th>
+      <th colspan="3">INSURANCE</th>
+      <th colspan="3">CUSTOMS</th>
+      <th colspan="3">SAMPLES</th>
+      <th colspan="3">LOCAL CHARGES</th>
+      <th colspan="2">LANDED</th>
+      <th colspan="4">MARKUP &amp; SELL</th>
+      <th colspan="2">QTY</th>
+      <th>RISK</th>
+    </tr>
+    <!-- Column header row -->
+    <tr class="col-hdr">
+      <th>IS</th>
+      <th>PACKAGE</th>
+      <th>SPEC</th>
+      <th>TYPE</th>
+      <th>LOCATION</th>
+      <th>IMAGE</th>
+      <th>BRAND</th>
+      <th>PRODUCT</th>
+      <th>DESCRIPTION</th>
+      <th>PRICE</th>
+      <th>SUP. BRAND</th>
+      <th>U.EXW</th>
+      <th>DISC%</th>
+      <th>NET EXW</th>
+      <th>EXW CUR</th>
+      <th>FX</th>
+      <th style="background:#4a6741;">SHIP%</th>
+      <th style="background:#4a6741;">UNIT AED</th>
+      <th style="background:#4a6741;">TOT AED</th>
+      <th style="background:#5a5a3a;">INS%</th>
+      <th style="background:#5a5a3a;">UNIT AED</th>
+      <th style="background:#5a5a3a;">TOT AED</th>
+      <th style="background:#6b4040;">CUS%</th>
+      <th style="background:#6b4040;">UNIT AED</th>
+      <th style="background:#6b4040;">TOT AED</th>
+      <th style="background:#3a5a5a;">SAM%</th>
+      <th style="background:#3a5a5a;">UNIT AED</th>
+      <th style="background:#3a5a5a;">TOT AED</th>
+      <th style="background:#4a3a5a;">LC%</th>
+      <th style="background:#4a3a5a;">UNIT AED</th>
+      <th style="background:#4a3a5a;">TOT AED</th>
+      <th style="background:#2c4a6e;">UNIT AED</th>
+      <th style="background:#2c4a6e;">TOT AED</th>
+      <th>MU</th>
+      <th>GM%</th>
+      <th style="background:#1a5c1a;">UNIT SELL</th>
+      <th style="background:#1a5c1a;">TOT SELL</th>
+      <th>QTY</th>
+      <th>UOM</th>
+      <th>RISK</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for line in doc.nl_quotation_lines %}
+    {% set is_sub = "." in (line.nl_is or "") %}
+    <tr class="{{ 'sub-row' if is_sub else 'main-row' }}">
+      <td class="ctr">{{ line.nl_is or "" }}</td>
+      <td>{{ line.nl_product_package or "" }}</td>
+      <td>{{ line.nl_specification or "" }}</td>
+      <td>{{ line.nl_product_type or "" }}</td>
+      <td>{{ line.nl_location or "" }}</td>
+      <td class="img-cell">{% if line.nl_image %}<img src="{{ line.nl_image }}">{% endif %}</td>
+      <td><strong>{{ line.nl_proposed_brand or "" }}</strong></td>
+      <td>{{ line.nl_proposed_product or "" }}</td>
+      <td style="max-width:100px; white-space:pre-wrap; font-size:6pt;">{{ line.nl_proposed_description or "" }}</td>
+      <td class="ctr">{{ line.nl_price_type or "" }}</td>
+      <td>{{ line.nl_supplier_brand or "" }}</td>
+      <td class="num">{{ "{:,.2f}".format(line.nl_uexw_value or 0) }}</td>
+      <td class="num">{{ "{:.1f}".format(line.nl_discount_pct or 0) }}%</td>
+      <td class="num">{{ "{:,.2f}".format(line.nl_net_uexw or 0) }}</td>
+      <td class="ctr">{{ line.nl_exw_currency or "" }}</td>
+      <td class="num">{{ "{:.4f}".format(line.nl_fx_rate or 0) }}</td>
+      <td class="num">{{ "{:.1f}".format(line.nl_ship_pct or 0) }}%</td>
+      <td class="num">{{ "{:,.2f}".format(line.nl_ship_unit_aed or 0) }}</td>
+      <td class="num">{{ "{:,.2f}".format(line.nl_ship_total_aed or 0) }}</td>
+      <td class="num">{{ "{:.1f}".format(line.nl_ins_pct or 0) }}%</td>
+      <td class="num">{{ "{:,.2f}".format(line.nl_ins_unit_aed or 0) }}</td>
+      <td class="num">{{ "{:,.2f}".format(line.nl_ins_total_aed or 0) }}</td>
+      <td class="num">{{ "{:.1f}".format(line.nl_cus_pct or 0) }}%</td>
+      <td class="num">{{ "{:,.2f}".format(line.nl_cus_unit_aed or 0) }}</td>
+      <td class="num">{{ "{:,.2f}".format(line.nl_cus_total_aed or 0) }}</td>
+      <td class="num">{{ "{:.1f}".format(line.nl_sam_pct or 0) }}%</td>
+      <td class="num">{{ "{:,.2f}".format(line.nl_sam_unit_aed or 0) }}</td>
+      <td class="num">{{ "{:,.2f}".format(line.nl_sam_total_aed or 0) }}</td>
+      <td class="num">{{ "{:.1f}".format(line.nl_lc_pct or 0) }}%</td>
+      <td class="num">{{ "{:,.2f}".format(line.nl_lc_unit_aed or 0) }}</td>
+      <td class="num">{{ "{:,.2f}".format(line.nl_lc_total_aed or 0) }}</td>
+      <td class="num"><strong>{{ "{:,.2f}".format(line.nl_landed_unit_aed or 0) }}</strong></td>
+      <td class="num"><strong>{{ "{:,.2f}".format(line.nl_landed_total_aed or 0) }}</strong></td>
+      <td class="num">{{ "{:.2f}".format(line.nl_markup or 0) }}x</td>
+      <td class="num">{{ "{:.1f}".format(line.nl_gm_pct or 0) }}%</td>
+      <td class="num"><strong>{{ "{:,.0f}".format(line.nl_unit_sell_aed or 0) }}</strong></td>
+      <td class="num"><strong>{{ "{:,.0f}".format(line.nl_total_sell_aed or 0) }}</strong></td>
+      <td class="num">{{ line.nl_qty or "" }}</td>
+      <td class="ctr">{{ line.nl_uom or "" }}</td>
+      <td class="ctr">{{ line.nl_approval_risk or "" }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr class="foot">
+      <td colspan="31" style="text-align:right;">TOTALS</td>
+      <td class="num">{{ "{:,.2f}".format(gt.land) }}</td>
+      <td></td><td></td>
+      <td class="num">{{ "{:,.0f}".format(gt.sell) }}</td>
+      <td class="num">{{ "{:,.0f}".format(gt.sell) }}</td>
+      <td colspan="3"></td>
+    </tr>
+  </tfoot>
+</table>
+
+<!-- ── Brand Summary ────────────────────────────────────────── -->
+{% if doc.nl_brand_summary %}
+<table class="summary" style="margin-top:14px;">
+  <thead>
+    <tr>
+      <th>BRAND</th>
+      <th>T.EX-WORKS</th>
+      <th>% EXW</th>
+      <th>T.LANDED</th>
+      <th>% LANDED</th>
+      <th>PROFIT</th>
+      <th>% SELLING</th>
+      <th>T.SELLING</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for row in doc.nl_brand_summary %}
+    <tr>
+      <td><strong>{{ row.brand }}</strong></td>
+      <td class="num">{{ "{:,.2f}".format(row.tot_exworks or 0) }}</td>
+      <td class="num">{{ "{:.1f}".format(row.pct_exworks or 0) }}%</td>
+      <td class="num">{{ "{:,.2f}".format(row.tot_landed or 0) }}</td>
+      <td class="num">{{ "{:.1f}".format(row.pct_landed or 0) }}%</td>
+      <td class="num">{{ "{:,.2f}".format(row.profit or 0) }}</td>
+      <td class="num">{{ "{:.1f}".format(row.pct_total or 0) }}%</td>
+      <td class="num"><strong>{{ "{:,.0f}".format(row.tot_selling or 0) }}</strong></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+  <tfoot>
+    <tr class="foot">
+      <td>TOTAL</td>
+      <td class="num">{{ "{:,.2f}".format(gt.exw) }}</td>
+      <td></td>
+      <td class="num">{{ "{:,.2f}".format(gt.land) }}</td>
+      <td></td>
+      <td class="num">{{ "{:,.2f}".format(gt.sell - gt.land) }}</td>
+      <td></td>
+      <td class="num">{{ "{:,.0f}".format(gt.sell) }}</td>
+    </tr>
+  </tfoot>
+</table>
+{% endif %}

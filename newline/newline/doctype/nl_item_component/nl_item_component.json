@@ -1,0 +1,74 @@
+{
+ "actions": [],
+ "creation": "2026-06-19 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "component_type",
+  "reference_code",
+  "description",
+  "brand",
+  "purchase_currency",
+  "ex_works_price",
+  "unit"
+ ],
+ "fields": [
+  {
+   "fieldname": "component_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Component Type",
+   "options": "Accessory\nDriver\nPower Supply\nCable\nOther",
+   "reqd": 1
+  },
+  {
+   "fieldname": "reference_code",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Reference Code"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Description"
+  },
+  {
+   "fieldname": "brand",
+   "fieldtype": "Link",
+   "label": "Brand",
+   "options": "Brand"
+  },
+  {
+   "fieldname": "purchase_currency",
+   "fieldtype": "Select",
+   "label": "Purchase Currency",
+   "options": "AED\nEUR\nGBP\nUSD"
+  },
+  {
+   "fieldname": "ex_works_price",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Ex-Works Price",
+   "options": "purchase_currency"
+  },
+  {
+   "fieldname": "unit",
+   "fieldtype": "Select",
+   "label": "Unit",
+   "options": "Nos\nMeter"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-06-19 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Newline",
+ "name": "NL Item Component",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

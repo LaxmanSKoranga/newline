@@ -1,0 +1,19 @@
+[
+ {"doctype": "Brand", "name": "O/M", "brand": "O/M"},
+ {"doctype": "Brand", "name": "XAL", "brand": "XAL"},
+ {"doctype": "Brand", "name": "Unonovesette", "brand": "Unonovesette"},
+ {"doctype": "Brand", "name": "Acolyte", "brand": "Acolyte"},
+ {"doctype": "Brand", "name": "LED Linear", "brand": "LED Linear"},
+ {"doctype": "Brand", "name": "EWO", "brand": "EWO"},
+ {"doctype": "Brand", "name": "Fibrepros", "brand": "Fibrepros"},
+ {"doctype": "Brand", "name": "FLOS", "brand": "FLOS"},
+ {"doctype": "Brand", "name": "VEXICA", "brand": "VEXICA"},
+ {"doctype": "Brand", "name": "ATEA", "brand": "ATEA"},
+ {"doctype": "Brand", "name": "WE-EF", "brand": "WE-EF"},
+ {"doctype": "Brand", "name": "Light Graphix", "brand": "Light Graphix"},
+ {"doctype": "Brand", "name": "Ledray", "brand": "Ledray"},
+ {"doctype": "Brand", "name": "DGA", "brand": "DGA"},
+ {"doctype": "Brand", "name": "Lucent", "brand": "Lucent"},
+ {"doctype": "Brand", "name": "OSRAM", "brand": "OSRAM"},
+ {"doctype": "Brand", "name": "Meanwell", "brand": "Meanwell"}
+]

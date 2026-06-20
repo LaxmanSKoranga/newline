@@ -1,0 +1,348 @@
+{
+ "actions": [],
+ "creation": "2026-06-20 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "nl_is", "nl_row_type", "nl_product_package", "nl_specification",
+  "nl_product_type", "nl_location", "nl_image",
+  "nl_proposed_brand", "nl_proposed_product", "nl_proposed_description",
+  "nl_price_type", "nl_supplier_brand", "nl_uexw_value", "nl_discount_pct",
+  "nl_net_uexw", "nl_tot_exw", "nl_exw_currency", "nl_fx_rate",
+  "nl_exworks_unit_aed", "nl_exworks_total_aed",
+  "nl_ship_pct", "nl_ship_unit_aed", "nl_ship_total_aed",
+  "nl_ins_pct", "nl_ins_unit_aed", "nl_ins_total_aed",
+  "nl_cus_pct", "nl_cus_unit_aed", "nl_cus_total_aed",
+  "nl_sam_pct", "nl_sam_unit_aed", "nl_sam_total_aed",
+  "nl_lc_pct", "nl_lc_unit_aed", "nl_lc_total_aed",
+  "nl_landed_unit_aed", "nl_landed_total_aed",
+  "nl_markup", "nl_unit_sell_aed", "nl_total_sell_aed", "nl_gm_pct",
+  "nl_qty", "nl_uom",
+  "nl_alt1_brand", "nl_alt1_product", "nl_alt1_description",
+  "nl_alt2_brand", "nl_alt2_product", "nl_alt2_description",
+  "nl_approval_risk"
+ ],
+ "fields": [
+  {
+   "fieldname": "nl_is",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "IS",
+   "columns": 1
+  },
+  {
+   "fieldname": "nl_row_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Row Type",
+   "options": "Main Item\nAccessory\nDriver",
+   "default": "Main Item",
+   "columns": 2
+  },
+  {
+   "fieldname": "nl_product_package",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Product Package",
+   "columns": 2
+  },
+  {
+   "fieldname": "nl_specification",
+   "fieldtype": "Select",
+   "label": "Specification",
+   "options": "\nSpecified\nEqually Approved\nApproved Vendor List\nAlternative"
+  },
+  {
+   "fieldname": "nl_product_type",
+   "fieldtype": "Link",
+   "label": "Item Code",
+   "options": "Item"
+  },
+  {
+   "fieldname": "nl_location",
+   "fieldtype": "Data",
+   "label": "Location"
+  },
+  {
+   "fieldname": "nl_image",
+   "fieldtype": "Attach Image",
+   "label": "Image"
+  },
+  {
+   "fieldname": "nl_proposed_brand",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Proposed Brand",
+   "columns": 2
+  },
+  {
+   "fieldname": "nl_proposed_product",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Proposed Product",
+   "columns": 3
+  },
+  {
+   "fieldname": "nl_proposed_description",
+   "fieldtype": "Text",
+   "label": "Proposed Description"
+  },
+  {
+   "fieldname": "nl_price_type",
+   "fieldtype": "Select",
+   "label": "Price Type",
+   "options": "\nAccurate\nEstimated"
+  },
+  {
+   "fieldname": "nl_supplier_brand",
+   "fieldtype": "Data",
+   "label": "Supplier Brand"
+  },
+  {
+   "fieldname": "nl_uexw_value",
+   "fieldtype": "Currency",
+   "label": "U.EXW Value"
+  },
+  {
+   "fieldname": "nl_discount_pct",
+   "fieldtype": "Percent",
+   "label": "Discount %",
+   "default": "0"
+  },
+  {
+   "fieldname": "nl_net_uexw",
+   "fieldtype": "Currency",
+   "label": "Net U.EXW",
+   "read_only": 1
+  },
+  {
+   "fieldname": "nl_tot_exw",
+   "fieldtype": "Currency",
+   "label": "Tot EXW",
+   "read_only": 1
+  },
+  {
+   "fieldname": "nl_exw_currency",
+   "fieldtype": "Select",
+   "label": "EXW Currency",
+   "options": "EUR\nUSD\nAED\nGBP",
+   "default": "USD"
+  },
+  {
+   "fieldname": "nl_fx_rate",
+   "fieldtype": "Float",
+   "label": "FX Rate",
+   "read_only": 1,
+   "precision": "4"
+  },
+  {
+   "fieldname": "nl_exworks_unit_aed",
+   "fieldtype": "Currency",
+   "label": "EXW Unit AED",
+   "read_only": 1
+  },
+  {
+   "fieldname": "nl_exworks_total_aed",
+   "fieldtype": "Currency",
+   "label": "EXW Total AED",
+   "read_only": 1
+  },
+  {
+   "fieldname": "nl_ship_pct",
+   "fieldtype": "Percent",
+   "label": "Freight %",
+   "default": "10"
+  },
+  {
+   "fieldname": "nl_ship_unit_aed",
+   "fieldtype": "Currency",
+   "label": "Freight Unit AED",
+   "read_only": 1
+  },
+  {
+   "fieldname": "nl_ship_total_aed",
+   "fieldtype": "Currency",
+   "label": "Freight Total AED",
+   "read_only": 1
+  },
+  {
+   "fieldname": "nl_ins_pct",
+   "fieldtype": "Percent",
+   "label": "Insurance %",
+   "default": "1"
+  },
+  {
+   "fieldname": "nl_ins_unit_aed",
+   "fieldtype": "Currency",
+   "label": "Insurance Unit AED",
+   "read_only": 1
+  },
+  {
+   "fieldname": "nl_ins_total_aed",
+   "fieldtype": "Currency",
+   "label": "Insurance Total AED",
+   "read_only": 1
+  },
+  {
+   "fieldname": "nl_cus_pct",
+   "fieldtype": "Percent",
+   "label": "Customs %",
+   "default": "6"
+  },
+  {
+   "fieldname": "nl_cus_unit_aed",
+   "fieldtype": "Currency",
+   "label": "Customs Unit AED",
+   "read_only": 1
+  },
+  {
+   "fieldname": "nl_cus_total_aed",
+   "fieldtype": "Currency",
+   "label": "Customs Total AED",
+   "read_only": 1
+  },
+  {
+   "fieldname": "nl_sam_pct",
+   "fieldtype": "Percent",
+   "label": "Samples %",
+   "default": "1"
+  },
+  {
+   "fieldname": "nl_sam_unit_aed",
+   "fieldtype": "Currency",
+   "label": "Samples Unit AED",
+   "read_only": 1
+  },
+  {
+   "fieldname": "nl_sam_total_aed",
+   "fieldtype": "Currency",
+   "label": "Samples Total AED",
+   "read_only": 1
+  },
+  {
+   "fieldname": "nl_lc_pct",
+   "fieldtype": "Percent",
+   "label": "Local Charges %",
+   "default": "2"
+  },
+  {
+   "fieldname": "nl_lc_unit_aed",
+   "fieldtype": "Currency",
+   "label": "LC Unit AED",
+   "read_only": 1
+  },
+  {
+   "fieldname": "nl_lc_total_aed",
+   "fieldtype": "Currency",
+   "label": "LC Total AED",
+   "read_only": 1
+  },
+  {
+   "fieldname": "nl_landed_unit_aed",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Landed Unit AED",
+   "read_only": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "nl_landed_total_aed",
+   "fieldtype": "Currency",
+   "label": "Landed Total AED",
+   "read_only": 1
+  },
+  {
+   "fieldname": "nl_markup",
+   "fieldtype": "Float",
+   "label": "Markup",
+   "default": "1.5",
+   "precision": "2"
+  },
+  {
+   "fieldname": "nl_unit_sell_aed",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Unit Sell AED",
+   "read_only": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "nl_total_sell_aed",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Total Sell AED",
+   "read_only": 1,
+   "columns": 2
+  },
+  {
+   "fieldname": "nl_gm_pct",
+   "fieldtype": "Percent",
+   "label": "GM %",
+   "read_only": 1
+  },
+  {
+   "fieldname": "nl_qty",
+   "fieldtype": "Float",
+   "in_list_view": 1,
+   "label": "Qty",
+   "columns": 1
+  },
+  {
+   "fieldname": "nl_uom",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "UOM",
+   "options": "Nos\nMeter\nSet",
+   "default": "Nos",
+   "columns": 1
+  },
+  {
+   "fieldname": "nl_alt1_brand",
+   "fieldtype": "Data",
+   "label": "Alt 1 Brand"
+  },
+  {
+   "fieldname": "nl_alt1_product",
+   "fieldtype": "Data",
+   "label": "Alt 1 Product"
+  },
+  {
+   "fieldname": "nl_alt1_description",
+   "fieldtype": "Text",
+   "label": "Alt 1 Description"
+  },
+  {
+   "fieldname": "nl_alt2_brand",
+   "fieldtype": "Data",
+   "label": "Alt 2 Brand"
+  },
+  {
+   "fieldname": "nl_alt2_product",
+   "fieldtype": "Data",
+   "label": "Alt 2 Product"
+  },
+  {
+   "fieldname": "nl_alt2_description",
+   "fieldtype": "Text",
+   "label": "Alt 2 Description"
+  },
+  {
+   "fieldname": "nl_approval_risk",
+   "fieldtype": "Select",
+   "label": "Approval Risk",
+   "options": "\nHigh\nMedium\nLow"
+  }
+ ],
+ "istable": 1,
+ "links": [],
+ "modified": "2026-06-20 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Newline",
+ "name": "NL Quotation Line",
+ "naming_rule": "Random",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,0 +1,230 @@
+[
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_tab",
+  "label": "Lighting Specs",
+  "fieldtype": "Tab Break",
+  "insert_after": "total_projected_qty",
+  "name": "Item-nl_tab"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_section_specs",
+  "label": "Fixture Specs",
+  "fieldtype": "Section Break",
+  "insert_after": "nl_tab",
+  "name": "Item-nl_section_specs"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_wattage",
+  "label": "Wattage (W)",
+  "fieldtype": "Data",
+  "insert_after": "nl_section_specs",
+  "name": "Item-nl_wattage"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_lumen_output",
+  "label": "Lumen Output (LM)",
+  "fieldtype": "Data",
+  "insert_after": "nl_wattage",
+  "name": "Item-nl_lumen_output"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_cct",
+  "label": "Colour Temperature (CCT)",
+  "fieldtype": "Data",
+  "insert_after": "nl_lumen_output",
+  "name": "Item-nl_cct"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_cri",
+  "label": "CRI",
+  "fieldtype": "Int",
+  "insert_after": "nl_cct",
+  "name": "Item-nl_cri"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_ip_rating",
+  "label": "IP Rating",
+  "fieldtype": "Data",
+  "insert_after": "nl_cri",
+  "name": "Item-nl_ip_rating"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_beam_angle",
+  "label": "Beam Angle",
+  "fieldtype": "Data",
+  "insert_after": "nl_ip_rating",
+  "name": "Item-nl_beam_angle"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_dimensions",
+  "label": "Dimensions",
+  "fieldtype": "Data",
+  "insert_after": "nl_beam_angle",
+  "name": "Item-nl_dimensions"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_dimming_protocol",
+  "label": "Dimming Protocol",
+  "fieldtype": "Select",
+  "options": "DALI\nDALI DIMMABLE\nNon-DALI\nPWM\n0-10V",
+  "insert_after": "nl_dimensions",
+  "name": "Item-nl_dimming_protocol"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_colour_finish",
+  "label": "Colour / Finish",
+  "fieldtype": "Data",
+  "insert_after": "nl_dimming_protocol",
+  "name": "Item-nl_colour_finish"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_col_specs",
+  "label": "",
+  "fieldtype": "Column Break",
+  "insert_after": "nl_colour_finish",
+  "name": "Item-nl_col_specs"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_reference_number",
+  "label": "Reference Number",
+  "fieldtype": "Data",
+  "insert_after": "nl_col_specs",
+  "name": "Item-nl_reference_number"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_section_components",
+  "label": "Components",
+  "fieldtype": "Section Break",
+  "insert_after": "nl_reference_number",
+  "name": "Item-nl_section_components"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_components",
+  "label": "Components",
+  "fieldtype": "Table",
+  "options": "NL Item Component",
+  "insert_after": "nl_section_components",
+  "name": "Item-nl_components"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_section_purchase",
+  "label": "Purchase & Pricing",
+  "fieldtype": "Section Break",
+  "insert_after": "nl_components",
+  "name": "Item-nl_section_purchase"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_purchase_currency",
+  "label": "Purchase Currency",
+  "fieldtype": "Select",
+  "options": "AED\nEUR\nGBP\nUSD",
+  "insert_after": "nl_section_purchase",
+  "name": "Item-nl_purchase_currency"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_ex_works_price",
+  "label": "Ex-Works Price",
+  "fieldtype": "Currency",
+  "options": "nl_purchase_currency",
+  "insert_after": "nl_purchase_currency",
+  "name": "Item-nl_ex_works_price"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_col_purchase",
+  "label": "",
+  "fieldtype": "Column Break",
+  "insert_after": "nl_ex_works_price",
+  "name": "Item-nl_col_purchase"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_discount_multiplier",
+  "label": "Discount Multiplier",
+  "fieldtype": "Float",
+  "default": "1",
+  "insert_after": "nl_col_purchase",
+  "name": "Item-nl_discount_multiplier"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_cct_multiplier",
+  "label": "CCT Multiplier",
+  "fieldtype": "Float",
+  "default": "1",
+  "insert_after": "nl_discount_multiplier",
+  "name": "Item-nl_cct_multiplier"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Item",
+  "fieldname": "nl_dali_multiplier",
+  "label": "DALI Multiplier",
+  "fieldtype": "Float",
+  "default": "1",
+  "insert_after": "nl_cct_multiplier",
+  "name": "Item-nl_dali_multiplier"
+ },
+
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_tab","label":"NL Lighting Quotation","fieldtype":"Tab Break","insert_after":"enq_det","name":"Quotation-nl_tab"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_mode","label":"NL Mode","fieldtype":"Check","insert_after":"nl_tab","hidden":1,"name":"Quotation-nl_mode"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_section_project","label":"NL Project Details","fieldtype":"Section Break","insert_after":"nl_mode","name":"Quotation-nl_section_project"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_project_name","label":"Project Name","fieldtype":"Data","insert_after":"nl_section_project","name":"Quotation-nl_project_name"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_ref_number","label":"Reference Number","fieldtype":"Data","insert_after":"nl_project_name","name":"Quotation-nl_ref_number"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_attention","label":"Attention","fieldtype":"Data","insert_after":"nl_ref_number","name":"Quotation-nl_attention"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_project_date","label":"Project Date","fieldtype":"Date","insert_after":"nl_attention","name":"Quotation-nl_project_date"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_col_project","label":"","fieldtype":"Column Break","insert_after":"nl_project_date","name":"Quotation-nl_col_project"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_exchange_rates","label":"Exchange Rates","fieldtype":"Table","options":"NL Exchange Rate","insert_after":"nl_col_project","name":"Quotation-nl_exchange_rates"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_section_costs","label":"Cost Parameters","fieldtype":"Section Break","insert_after":"nl_exchange_rates","name":"Quotation-nl_section_costs"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_freight_pct","label":"Freight %","fieldtype":"Percent","default":"10","insert_after":"nl_section_costs","name":"Quotation-nl_freight_pct"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_insurance_pct","label":"Insurance %","fieldtype":"Percent","default":"1","insert_after":"nl_freight_pct","name":"Quotation-nl_insurance_pct"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_customs_pct","label":"Customs %","fieldtype":"Percent","default":"6","insert_after":"nl_insurance_pct","name":"Quotation-nl_customs_pct"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_col_costs","label":"","fieldtype":"Column Break","insert_after":"nl_customs_pct","name":"Quotation-nl_col_costs"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_samples_pct","label":"Samples %","fieldtype":"Percent","default":"1","insert_after":"nl_col_costs","name":"Quotation-nl_samples_pct"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_lc_pct","label":"Local Charges %","fieldtype":"Percent","default":"2","insert_after":"nl_samples_pct","name":"Quotation-nl_lc_pct"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_default_markup","label":"Default Markup","fieldtype":"Float","default":"1.5","insert_after":"nl_lc_pct","name":"Quotation-nl_default_markup"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_section_lines","label":"NL Quotation Lines","fieldtype":"Section Break","insert_after":"nl_default_markup","name":"Quotation-nl_section_lines"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_workspace","label":"NL Workspace","fieldtype":"HTML","insert_after":"nl_section_lines","name":"Quotation-nl_workspace"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_quotation_lines","label":"NL Quotation Lines","fieldtype":"Table","options":"NL Quotation Line","insert_after":"nl_workspace","name":"Quotation-nl_quotation_lines"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_section_summary","label":"Brand Summary","fieldtype":"Section Break","insert_after":"nl_quotation_lines","name":"Quotation-nl_section_summary"},
+ {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_brand_summary","label":"Brand Summary","fieldtype":"Table","options":"NL Brand Summary","insert_after":"nl_section_summary","name":"Quotation-nl_brand_summary"}
+]
