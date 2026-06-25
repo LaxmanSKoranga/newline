@@ -6,11 +6,55 @@ _DEFAULT_RATES = {"EUR": 4.5, "USD": 3.8, "AED": 1.0, "GBP": 5.2}
 
 
 def before_save(doc, method=None):
+	# Prevent ERPNext's pricing-rule engine from overriding the rates we set below
+	doc.ignore_pricing_rule = 1
+
 	if not doc.nl_project_date:
 		doc.nl_project_date = today()
+
+	_migrate_nl_lines(doc)
 	_ensure_exchange_rates(doc)
 	_calculate_lines(doc)
 	_rebuild_brand_summary(doc)
+	_finalize_item_totals(doc)
+
+
+def _migrate_nl_lines(doc):
+	"""One-time auto-migration: copy old nl_quotation_lines rows into doc.items."""
+	if doc.items:
+		return
+	old_lines = doc.get("nl_quotation_lines") or []
+	if not old_lines:
+		return
+	for line in old_lines:
+		doc.append("items", {
+			"item_code":           line.get("nl_product_type") or "SERVICES",
+			"item_name":           line.get("nl_proposed_product") or "",
+			"description":         line.get("nl_proposed_description") or "",
+			"qty":                 flt(line.get("nl_qty")) or 1,
+			"uom":                 line.get("nl_uom") or "Nos",
+			"nl_is":               line.get("nl_is"),
+			"nl_row_type":         line.get("nl_row_type") or "Main Item",
+			"nl_product_package":  line.get("nl_product_package"),
+			"nl_specification":    line.get("nl_specification"),
+			"nl_location":         line.get("nl_location"),
+			"nl_image":            line.get("nl_image"),
+			"nl_proposed_brand":   line.get("nl_proposed_brand"),
+			"nl_proposed_product": line.get("nl_proposed_product"),
+			"nl_price_type":       line.get("nl_price_type"),
+			"nl_supplier_brand":   line.get("nl_supplier_brand"),
+			"nl_uexw_value":       flt(line.get("nl_uexw_value")),
+			"nl_discount_pct":     flt(line.get("nl_discount_pct")),
+			"nl_exw_currency":     line.get("nl_exw_currency") or "USD",
+			"nl_fx_rate":          flt(line.get("nl_fx_rate")),
+			"nl_markup":           flt(line.get("nl_markup")) or 1.5,
+			"nl_ship_pct":         flt(line.get("nl_ship_pct")),
+			"nl_ins_pct":          flt(line.get("nl_ins_pct")),
+			"nl_cus_pct":          flt(line.get("nl_cus_pct")),
+			"nl_sam_pct":          flt(line.get("nl_sam_pct")),
+			"nl_lc_pct":           flt(line.get("nl_lc_pct")),
+			"nl_approval_risk":    line.get("nl_approval_risk"),
+		})
 
 
 # ── Exchange rates ────────────────────────────────────────────────────────────
@@ -29,11 +73,11 @@ def _get_fx(doc, currency):
 	return _DEFAULT_RATES.get(currency, 1)
 
 
-# ── Line calculations ─────────────────────────────────────────────────────────
+# ── Line calculations (now on doc.items) ─────────────────────────────────────
 
 def _calculate_lines(doc):
-	for line in (doc.nl_quotation_lines or []):
-		qty        = flt(line.nl_qty)
+	for line in (doc.items or []):
+		qty        = flt(line.qty)
 		uexw       = flt(line.nl_uexw_value)
 		disc_pct   = flt(line.nl_discount_pct)
 		fx         = flt(line.nl_fx_rate) or _get_fx(doc, line.nl_exw_currency or "USD")
@@ -74,12 +118,22 @@ def _calculate_lines(doc):
 		line.nl_gm_pct           = ((unit_sell - landed) / unit_sell * 100) if unit_sell else 0
 
 
-# ── Brand summary ─────────────────────────────────────────────────────────────
+# ── Push NL sell price into ERPNext's native rate/amount fields ───────────────
+
+def _finalize_item_totals(doc):
+	for item in (doc.items or []):
+		item.rate   = flt(item.nl_unit_sell_aed)
+		item.amount = flt(item.nl_total_sell_aed)
+	# Recalculate ERPNext's grand_total, net_total etc. from the updated rates
+	doc.run_method("calculate_taxes_and_totals")
+
+
+# ── Brand summary (now from doc.items) ───────────────────────────────────────
 
 def _rebuild_brand_summary(doc):
 	data = defaultdict(lambda: {"exw": 0.0, "landed": 0.0, "sell": 0.0})
 
-	for line in (doc.nl_quotation_lines or []):
+	for line in (doc.items or []):
 		if line.nl_row_type != "Main Item":
 			continue
 		brand = line.nl_supplier_brand or line.nl_proposed_brand or "Unknown"

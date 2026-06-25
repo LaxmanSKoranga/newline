@@ -204,27 +204,751 @@
   "insert_after": "nl_cct_multiplier",
   "name": "Item-nl_dali_multiplier"
  },
-
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_tab","label":"NL Lighting Quotation","fieldtype":"Tab Break","insert_after":"enq_det","name":"Quotation-nl_tab"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_mode","label":"NL Mode","fieldtype":"Check","insert_after":"nl_tab","hidden":1,"name":"Quotation-nl_mode"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_section_project","label":"NL Project Details","fieldtype":"Section Break","insert_after":"nl_mode","name":"Quotation-nl_section_project"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_project_name","label":"Project Name","fieldtype":"Data","insert_after":"nl_section_project","name":"Quotation-nl_project_name"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_ref_number","label":"Reference Number","fieldtype":"Data","insert_after":"nl_project_name","name":"Quotation-nl_ref_number"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_attention","label":"Attention","fieldtype":"Data","insert_after":"nl_ref_number","name":"Quotation-nl_attention"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_project_date","label":"Project Date","fieldtype":"Date","insert_after":"nl_attention","name":"Quotation-nl_project_date"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_col_project","label":"","fieldtype":"Column Break","insert_after":"nl_project_date","name":"Quotation-nl_col_project"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_exchange_rates","label":"Exchange Rates","fieldtype":"Table","options":"NL Exchange Rate","insert_after":"nl_col_project","name":"Quotation-nl_exchange_rates"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_section_costs","label":"Cost Parameters","fieldtype":"Section Break","insert_after":"nl_exchange_rates","name":"Quotation-nl_section_costs"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_freight_pct","label":"Freight %","fieldtype":"Percent","default":"10","insert_after":"nl_section_costs","name":"Quotation-nl_freight_pct"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_insurance_pct","label":"Insurance %","fieldtype":"Percent","default":"1","insert_after":"nl_freight_pct","name":"Quotation-nl_insurance_pct"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_customs_pct","label":"Customs %","fieldtype":"Percent","default":"6","insert_after":"nl_insurance_pct","name":"Quotation-nl_customs_pct"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_col_costs","label":"","fieldtype":"Column Break","insert_after":"nl_customs_pct","name":"Quotation-nl_col_costs"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_samples_pct","label":"Samples %","fieldtype":"Percent","default":"1","insert_after":"nl_col_costs","name":"Quotation-nl_samples_pct"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_lc_pct","label":"Local Charges %","fieldtype":"Percent","default":"2","insert_after":"nl_samples_pct","name":"Quotation-nl_lc_pct"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_default_markup","label":"Default Markup","fieldtype":"Float","default":"1.5","insert_after":"nl_lc_pct","name":"Quotation-nl_default_markup"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_section_lines","label":"NL Quotation Lines","fieldtype":"Section Break","insert_after":"nl_default_markup","name":"Quotation-nl_section_lines"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_workspace","label":"NL Workspace","fieldtype":"HTML","insert_after":"nl_section_lines","name":"Quotation-nl_workspace"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_quotation_lines","label":"NL Quotation Lines","fieldtype":"Table","options":"NL Quotation Line","insert_after":"nl_workspace","name":"Quotation-nl_quotation_lines"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_section_summary","label":"Brand Summary","fieldtype":"Section Break","insert_after":"nl_quotation_lines","name":"Quotation-nl_section_summary"},
- {"doctype":"Custom Field","dt":"Quotation","fieldname":"nl_brand_summary","label":"Brand Summary","fieldtype":"Table","options":"NL Brand Summary","insert_after":"nl_section_summary","name":"Quotation-nl_brand_summary"}
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_tab",
+  "label": "NL Lighting Quotation",
+  "fieldtype": "Tab Break",
+  "insert_after": "enq_det",
+  "name": "Quotation-nl_tab"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_mode",
+  "label": "NL Mode",
+  "fieldtype": "Check",
+  "insert_after": "nl_tab",
+  "hidden": 1,
+  "name": "Quotation-nl_mode"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_section_project",
+  "label": "NL Project Details",
+  "fieldtype": "Section Break",
+  "insert_after": "nl_mode",
+  "name": "Quotation-nl_section_project"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_project_name",
+  "label": "Project Name",
+  "fieldtype": "Data",
+  "insert_after": "nl_section_project",
+  "name": "Quotation-nl_project_name"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_ref_number",
+  "label": "Reference Number",
+  "fieldtype": "Data",
+  "insert_after": "nl_project_name",
+  "name": "Quotation-nl_ref_number"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_attention",
+  "label": "Attention",
+  "fieldtype": "Data",
+  "insert_after": "nl_ref_number",
+  "name": "Quotation-nl_attention"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_project_date",
+  "label": "Project Date",
+  "fieldtype": "Date",
+  "insert_after": "nl_attention",
+  "name": "Quotation-nl_project_date"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_col_project",
+  "label": "",
+  "fieldtype": "Column Break",
+  "insert_after": "nl_project_date",
+  "name": "Quotation-nl_col_project"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_exchange_rates",
+  "label": "Exchange Rates",
+  "fieldtype": "Table",
+  "options": "NL Exchange Rate",
+  "insert_after": "nl_col_project",
+  "name": "Quotation-nl_exchange_rates"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_section_costs",
+  "label": "Cost Parameters",
+  "fieldtype": "Section Break",
+  "insert_after": "nl_exchange_rates",
+  "name": "Quotation-nl_section_costs"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_freight_pct",
+  "label": "Freight %",
+  "fieldtype": "Percent",
+  "default": "10",
+  "insert_after": "nl_section_costs",
+  "name": "Quotation-nl_freight_pct"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_insurance_pct",
+  "label": "Insurance %",
+  "fieldtype": "Percent",
+  "default": "1",
+  "insert_after": "nl_freight_pct",
+  "name": "Quotation-nl_insurance_pct"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_customs_pct",
+  "label": "Customs %",
+  "fieldtype": "Percent",
+  "default": "6",
+  "insert_after": "nl_insurance_pct",
+  "name": "Quotation-nl_customs_pct"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_col_costs",
+  "label": "",
+  "fieldtype": "Column Break",
+  "insert_after": "nl_customs_pct",
+  "name": "Quotation-nl_col_costs"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_samples_pct",
+  "label": "Samples %",
+  "fieldtype": "Percent",
+  "default": "1",
+  "insert_after": "nl_col_costs",
+  "name": "Quotation-nl_samples_pct"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_lc_pct",
+  "label": "Local Charges %",
+  "fieldtype": "Percent",
+  "default": "2",
+  "insert_after": "nl_samples_pct",
+  "name": "Quotation-nl_lc_pct"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_default_markup",
+  "label": "Default Markup",
+  "fieldtype": "Float",
+  "default": "1.5",
+  "insert_after": "nl_lc_pct",
+  "name": "Quotation-nl_default_markup"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_section_lines",
+  "label": "NL Lighting Workspace",
+  "fieldtype": "Section Break",
+  "insert_after": "nl_default_markup",
+  "name": "Quotation-nl_section_lines"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_workspace",
+  "label": "NL Workspace",
+  "fieldtype": "HTML",
+  "insert_after": "nl_section_lines",
+  "name": "Quotation-nl_workspace"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_section_summary",
+  "label": "Brand Summary",
+  "fieldtype": "Section Break",
+  "insert_after": "nl_workspace",
+  "name": "Quotation-nl_section_summary"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation",
+  "fieldname": "nl_brand_summary",
+  "label": "Brand Summary",
+  "fieldtype": "Table",
+  "options": "NL Brand Summary",
+  "insert_after": "nl_section_summary",
+  "name": "Quotation-nl_brand_summary"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_qi_section",
+  "label": "NL Costing",
+  "fieldtype": "Section Break",
+  "collapsible": 1,
+  "collapsible_depends_on": "",
+  "insert_after": "amount",
+  "name": "Quotation Item-nl_qi_section",
+  "collapsed": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_is",
+  "label": "IS",
+  "fieldtype": "Data",
+  "insert_after": "nl_qi_section",
+  "name": "Quotation Item-nl_is",
+  "reqd": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_row_type",
+  "label": "Row Type",
+  "fieldtype": "Select",
+  "options": "Main Item\nAccessory\nDriver",
+  "default": "Main Item",
+  "insert_after": "nl_is",
+  "name": "Quotation Item-nl_row_type"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_product_package",
+  "label": "Product Package",
+  "fieldtype": "Data",
+  "insert_after": "nl_cb_a1",
+  "name": "Quotation Item-nl_product_package"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_specification",
+  "label": "Specification",
+  "fieldtype": "Select",
+  "options": "\nSpecified\nEqually Approved\nApproved Vendor List\nAlternative",
+  "insert_after": "nl_product_package",
+  "name": "Quotation Item-nl_specification"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_location",
+  "label": "Location",
+  "fieldtype": "Data",
+  "insert_after": "nl_cb_a2",
+  "name": "Quotation Item-nl_location"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_image",
+  "label": "Image",
+  "fieldtype": "Attach Image",
+  "insert_after": "nl_location",
+  "name": "Quotation Item-nl_image"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_proposed_brand",
+  "label": "Proposed Brand",
+  "fieldtype": "Data",
+  "insert_after": "nl_sb_b",
+  "name": "Quotation Item-nl_proposed_brand",
+  "reqd": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_proposed_product",
+  "label": "Proposed Product",
+  "fieldtype": "Data",
+  "insert_after": "nl_proposed_brand",
+  "name": "Quotation Item-nl_proposed_product",
+  "reqd": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_price_type",
+  "label": "Price Type",
+  "fieldtype": "Select",
+  "options": "\nAccurate\nEstimated",
+  "insert_after": "nl_cb_b1",
+  "name": "Quotation Item-nl_price_type"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_supplier_brand",
+  "label": "Supplier Brand",
+  "fieldtype": "Data",
+  "insert_after": "nl_price_type",
+  "name": "Quotation Item-nl_supplier_brand"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_uexw_value",
+  "label": "U.EXW Value",
+  "fieldtype": "Currency",
+  "insert_after": "nl_sb_c",
+  "name": "Quotation Item-nl_uexw_value",
+  "reqd": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_discount_pct",
+  "label": "Supplier Discount %",
+  "fieldtype": "Percent",
+  "default": "0",
+  "insert_after": "nl_uexw_value",
+  "name": "Quotation Item-nl_discount_pct"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_net_uexw",
+  "label": "Net U.EXW",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_cb_c1",
+  "name": "Quotation Item-nl_net_uexw"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_tot_exw",
+  "label": "Tot EXW",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_net_uexw",
+  "name": "Quotation Item-nl_tot_exw"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_exw_currency",
+  "label": "EXW Currency",
+  "fieldtype": "Select",
+  "options": "EUR\nUSD\nAED\nGBP",
+  "default": "USD",
+  "insert_after": "nl_tot_exw",
+  "name": "Quotation Item-nl_exw_currency"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_fx_rate",
+  "label": "FX Rate",
+  "fieldtype": "Float",
+  "read_only": 1,
+  "precision": "4",
+  "insert_after": "nl_exw_currency",
+  "name": "Quotation Item-nl_fx_rate"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_exworks_unit_aed",
+  "label": "EXW Unit AED",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_cb_c2",
+  "name": "Quotation Item-nl_exworks_unit_aed"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_exworks_total_aed",
+  "label": "EXW Total AED",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_sb_d",
+  "name": "Quotation Item-nl_exworks_total_aed"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_ship_pct",
+  "label": "Freight %",
+  "fieldtype": "Percent",
+  "default": "10",
+  "insert_after": "nl_exworks_total_aed",
+  "name": "Quotation Item-nl_ship_pct"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_ship_unit_aed",
+  "label": "Freight Unit AED",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_ship_pct",
+  "name": "Quotation Item-nl_ship_unit_aed"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_ship_total_aed",
+  "label": "Freight Total AED",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_ship_unit_aed",
+  "name": "Quotation Item-nl_ship_total_aed"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_ins_pct",
+  "label": "Insurance %",
+  "fieldtype": "Percent",
+  "default": "1",
+  "insert_after": "nl_ship_total_aed",
+  "name": "Quotation Item-nl_ins_pct"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_ins_unit_aed",
+  "label": "Insurance Unit AED",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_ins_pct",
+  "name": "Quotation Item-nl_ins_unit_aed"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_ins_total_aed",
+  "label": "Insurance Total AED",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_ins_unit_aed",
+  "name": "Quotation Item-nl_ins_total_aed"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_cus_pct",
+  "label": "Customs %",
+  "fieldtype": "Percent",
+  "default": "6",
+  "insert_after": "nl_ins_total_aed",
+  "name": "Quotation Item-nl_cus_pct"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_cus_unit_aed",
+  "label": "Customs Unit AED",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_cus_pct",
+  "name": "Quotation Item-nl_cus_unit_aed"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_cus_total_aed",
+  "label": "Customs Total AED",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_cus_unit_aed",
+  "name": "Quotation Item-nl_cus_total_aed"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_sam_pct",
+  "label": "Samples %",
+  "fieldtype": "Percent",
+  "default": "1",
+  "insert_after": "nl_cus_total_aed",
+  "name": "Quotation Item-nl_sam_pct"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_sam_unit_aed",
+  "label": "Samples Unit AED",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_sam_pct",
+  "name": "Quotation Item-nl_sam_unit_aed"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_sam_total_aed",
+  "label": "Samples Total AED",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_sam_unit_aed",
+  "name": "Quotation Item-nl_sam_total_aed"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_lc_pct",
+  "label": "Local Charges %",
+  "fieldtype": "Percent",
+  "default": "2",
+  "insert_after": "nl_sam_total_aed",
+  "name": "Quotation Item-nl_lc_pct"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_lc_unit_aed",
+  "label": "LC Unit AED",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_lc_pct",
+  "name": "Quotation Item-nl_lc_unit_aed"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_lc_total_aed",
+  "label": "LC Total AED",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_lc_unit_aed",
+  "name": "Quotation Item-nl_lc_total_aed"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_landed_unit_aed",
+  "label": "Landed Unit AED",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_lc_total_aed",
+  "name": "Quotation Item-nl_landed_unit_aed"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_landed_total_aed",
+  "label": "Landed Total AED",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_landed_unit_aed",
+  "name": "Quotation Item-nl_landed_total_aed"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_markup",
+  "label": "Markup",
+  "fieldtype": "Float",
+  "default": "1.5",
+  "precision": "2",
+  "insert_after": "nl_landed_total_aed",
+  "name": "Quotation Item-nl_markup"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_unit_sell_aed",
+  "label": "Unit Sell AED",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_markup",
+  "name": "Quotation Item-nl_unit_sell_aed"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_total_sell_aed",
+  "label": "Total Sell AED",
+  "fieldtype": "Currency",
+  "read_only": 1,
+  "insert_after": "nl_unit_sell_aed",
+  "name": "Quotation Item-nl_total_sell_aed"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_gm_pct",
+  "label": "GM %",
+  "fieldtype": "Percent",
+  "read_only": 1,
+  "insert_after": "nl_total_sell_aed",
+  "name": "Quotation Item-nl_gm_pct"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_alt1_brand",
+  "label": "Alt 1 Brand",
+  "fieldtype": "Data",
+  "insert_after": "nl_gm_pct",
+  "name": "Quotation Item-nl_alt1_brand"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_alt1_product",
+  "label": "Alt 1 Product",
+  "fieldtype": "Data",
+  "insert_after": "nl_alt1_brand",
+  "name": "Quotation Item-nl_alt1_product"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_alt1_description",
+  "label": "Alt 1 Description",
+  "fieldtype": "Text",
+  "insert_after": "nl_alt1_product",
+  "name": "Quotation Item-nl_alt1_description"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_alt2_brand",
+  "label": "Alt 2 Brand",
+  "fieldtype": "Data",
+  "insert_after": "nl_alt1_description",
+  "name": "Quotation Item-nl_alt2_brand"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_alt2_product",
+  "label": "Alt 2 Product",
+  "fieldtype": "Data",
+  "insert_after": "nl_alt2_brand",
+  "name": "Quotation Item-nl_alt2_product"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_alt2_description",
+  "label": "Alt 2 Description",
+  "fieldtype": "Text",
+  "insert_after": "nl_alt2_product",
+  "name": "Quotation Item-nl_alt2_description"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_approval_risk",
+  "label": "Approval Risk",
+  "fieldtype": "Select",
+  "options": "\nHigh\nMedium\nLow",
+  "insert_after": "nl_cb_b2",
+  "name": "Quotation Item-nl_approval_risk"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_cb_a1",
+  "label": "",
+  "fieldtype": "Column Break",
+  "insert_after": "nl_row_type",
+  "name": "Quotation Item-nl_cb_a1"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_cb_a2",
+  "label": "",
+  "fieldtype": "Column Break",
+  "insert_after": "nl_specification",
+  "name": "Quotation Item-nl_cb_a2"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_sb_b",
+  "label": "",
+  "fieldtype": "Section Break",
+  "insert_after": "nl_image",
+  "name": "Quotation Item-nl_sb_b"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_cb_b1",
+  "label": "",
+  "fieldtype": "Column Break",
+  "insert_after": "nl_proposed_product",
+  "name": "Quotation Item-nl_cb_b1"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_cb_b2",
+  "label": "",
+  "fieldtype": "Column Break",
+  "insert_after": "nl_supplier_brand",
+  "name": "Quotation Item-nl_cb_b2"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_sb_c",
+  "label": "EXW Pricing",
+  "fieldtype": "Section Break",
+  "insert_after": "nl_approval_risk",
+  "name": "Quotation Item-nl_sb_c"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_cb_c1",
+  "label": "",
+  "fieldtype": "Column Break",
+  "insert_after": "nl_exw_currency",
+  "name": "Quotation Item-nl_cb_c1"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_cb_c2",
+  "label": "",
+  "fieldtype": "Column Break",
+  "insert_after": "nl_fx_rate",
+  "name": "Quotation Item-nl_cb_c2"
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Quotation Item",
+  "fieldname": "nl_sb_d",
+  "label": "Calculated Costs",
+  "fieldtype": "Section Break",
+  "collapsible": 1,
+  "collapsed": 1,
+  "insert_after": "nl_markup",
+  "name": "Quotation Item-nl_sb_d"
+ }
 ]

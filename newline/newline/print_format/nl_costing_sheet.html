@@ -1,5 +1,5 @@
 {% set gt = namespace(exw=0, land=0, sell=0) %}
-{% for line in doc.nl_quotation_lines %}
+{% for line in doc.items %}
   {% if line.nl_row_type == "Main Item" %}
     {% set gt.exw  = gt.exw  + (line.nl_tot_exw           or 0) %}
     {% set gt.land = gt.land + (line.nl_landed_total_aed   or 0) %}
@@ -140,18 +140,18 @@
     </tr>
   </thead>
   <tbody>
-    {% for line in doc.nl_quotation_lines %}
+    {% for line in doc.items %}
     {% set is_sub = "." in (line.nl_is or "") %}
     <tr class="{{ 'sub-row' if is_sub else 'main-row' }}">
       <td class="ctr">{{ line.nl_is or "" }}</td>
       <td>{{ line.nl_product_package or "" }}</td>
       <td>{{ line.nl_specification or "" }}</td>
-      <td>{{ line.nl_product_type or "" }}</td>
+      <td>{{ line.item_code or "" }}</td>
       <td>{{ line.nl_location or "" }}</td>
       <td class="img-cell">{% if line.nl_image %}<img src="{{ line.nl_image }}">{% endif %}</td>
       <td><strong>{{ line.nl_proposed_brand or "" }}</strong></td>
       <td>{{ line.nl_proposed_product or "" }}</td>
-      <td style="max-width:100px; white-space:pre-wrap; font-size:6pt;">{{ line.nl_proposed_description or "" }}</td>
+      <td style="max-width:100px; white-space:pre-wrap; font-size:6pt;">{{ line.description or "" }}</td>
       <td class="ctr">{{ line.nl_price_type or "" }}</td>
       <td>{{ line.nl_supplier_brand or "" }}</td>
       <td class="num">{{ "{:,.2f}".format(line.nl_uexw_value or 0) }}</td>
@@ -180,8 +180,8 @@
       <td class="num">{{ "{:.1f}".format(line.nl_gm_pct or 0) }}%</td>
       <td class="num"><strong>{{ "{:,.0f}".format(line.nl_unit_sell_aed or 0) }}</strong></td>
       <td class="num"><strong>{{ "{:,.0f}".format(line.nl_total_sell_aed or 0) }}</strong></td>
-      <td class="num">{{ line.nl_qty or "" }}</td>
-      <td class="ctr">{{ line.nl_uom or "" }}</td>
+      <td class="num">{{ line.qty or "" }}</td>
+      <td class="ctr">{{ line.uom or "" }}</td>
       <td class="ctr">{{ line.nl_approval_risk or "" }}</td>
     </tr>
     {% endfor %}

@@ -12,7 +12,7 @@ _COLS = [
 	("A",  "nl_is",                   "IS",            36,  False),
 	("B",  "nl_product_package",      "PKG",           80,  False),
 	("C",  "nl_specification",        "SPEC",          95,  False),
-	("D",  "nl_product_type",         "TYPE",          85,  False),
+	("D",  "item_code",                "TYPE",          85,  False),
 	("E",  "nl_location",             "LOCATION",      80,  False),
 	("F",  "nl_proposed_brand",       "BRAND",         80,  False),
 	("G",  "nl_proposed_product",     "PRODUCT",      105,  False),
@@ -47,8 +47,8 @@ _COLS = [
 	("AJ", "nl_unit_sell_aed",        "UNIT SELL",     84,  True),
 	("AK", "nl_total_sell_aed",       "TOT SELL",      84,  True),
 	("AL", "nl_gm_pct",               "GM%",           50,  True),
-	("AM", "nl_qty",                  "QTY",           48,  False),
-	("AN", "nl_uom",                  "UOM",           42,  False),
+	("AM", "qty",                      "QTY",           48,  False),
+	("AN", "uom",                      "UOM",           42,  False),
 	("AO", "nl_approval_risk",        "RISK",          58,  False),
 	("AP", "nl_alt1_brand",           "ALT1 BRAND",    75,  False),
 	("AQ", "nl_alt1_product",         "ALT1 PRODUCT",  92,  False),
@@ -143,7 +143,7 @@ def _num_fmt(field):
 	if field == "nl_gm_pct":   return "0.0"
 	if field == "nl_fx_rate":  return "0.0000"
 	if field == "nl_markup":   return "0.00"
-	if field == "nl_qty":      return "#,##0.##"
+	if field == "qty":         return "#,##0.##"
 	return "@"
 
 
@@ -210,7 +210,7 @@ def _build_workbook(doc):
 
 	# Data rows
 	DATA_START = 5
-	lines = doc.nl_quotation_lines or []
+	lines = doc.items or []
 
 	for idx, line in enumerate(lines):
 		r  = DATA_START + idx
@@ -251,12 +251,12 @@ def _build_workbook(doc):
 				cell.font = Font(size=9, color="1A1A3E" if rt != "Accessory" else "555555")
 
 			# alignment
-			if field in ("nl_is","nl_price_type","nl_exw_currency","nl_uom","nl_approval_risk"):
+			if field in ("nl_is","nl_price_type","nl_exw_currency","uom","nl_approval_risk"):
 				cell.alignment = _align("center")
 			elif _num_fmt(field) != "@":
 				cell.alignment = _align("right")
 			else:
-				cell.alignment = _align("left", wrap=field == "nl_proposed_description")
+				cell.alignment = _align("left", wrap=field == "description")
 
 			# border — IS col gets left accent
 			if col_l == "A":
@@ -290,7 +290,7 @@ def _build_workbook(doc):
 			cell.value = f"=SUM(AH{DATA_START}:AH{N})"; cell.number_format = "#,##0"; cell.font = Font(bold=True, color="7BB8F5", size=9)
 		elif field == "nl_total_sell_aed":
 			cell.value = f"=SUM(AK{DATA_START}:AK{N})"; cell.number_format = "#,##0"; cell.font = Font(bold=True, color="7CF59D", size=9)
-		elif field == "nl_qty":
+		elif field == "qty":
 			cell.value = f"=SUM(AM{DATA_START}:AM{N})"; cell.number_format = "#,##0"
 
 	# Brand Summary

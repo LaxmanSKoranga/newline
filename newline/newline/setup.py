@@ -6,8 +6,9 @@ import frappe
 def create_print_formats():
 	pf_dir = os.path.join(os.path.dirname(__file__), "print_format")
 	formats = [
-		("NL Commercial Proposal", "Quotation", "nl_commercial_proposal.html"),
-		("NL Costing Sheet",       "Quotation", "nl_costing_sheet.html"),
+		("NL Commercial Proposal",        "Quotation", "nl_commercial_proposal.html"),
+		("NL Commercial Proposal Modern", "Quotation", "nl_commercial_proposal_modern.html"),
+		("NL Costing Sheet",              "Quotation", "nl_costing_sheet.html"),
 	]
 	for name, doctype, filename in formats:
 		html_path = os.path.join(pf_dir, filename)

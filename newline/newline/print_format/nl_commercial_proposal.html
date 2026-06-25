@@ -1,110 +1,209 @@
-{% set grand_sell = namespace(v=0) %}
-{% for line in doc.nl_quotation_lines %}
-  {% if line.nl_row_type == "Main Item" %}{% set grand_sell.v = grand_sell.v + (line.nl_total_sell_aed or 0) %}{% endif %}
+{% set tot = namespace(qty=0, sell=0) %}
+{% for line in doc.items %}
+  {% set tot.qty  = tot.qty  + (line.qty or 0) %}
+  {% set tot.sell = tot.sell + (line.nl_total_sell_aed or 0) %}
 {% endfor %}
 
 <style>
-  @page { size: A4 landscape; margin: 10mm; }
-  body  { font-family: Arial, sans-serif; font-size: 8.5pt; color: #222; }
+@page { size: A4 landscape; margin: 14mm 13mm 12mm; }
+*    { box-sizing: border-box; }
+body { font-family: Arial, sans-serif; font-size: 8pt; color: #252525; margin: 0; }
 
-  /* ── Header ── */
-  .hdr        { width:100%; border-collapse:collapse; margin-bottom:8px; }
-  .co-name    { font-size:15pt; font-weight:bold; color:#1a1a3e; letter-spacing:1px; }
-  .co-sub     { font-size:8pt; color:#555; }
-  .prop-title { font-size:18pt; font-weight:bold; color:#1a1a3e; text-align:right; }
-  .prop-meta  { font-size:8.5pt; }
-  .prop-meta td{ padding:1px 4px; }
-  .proj-bar   { background:#1a1a3e; color:#fff; padding:5px 10px; font-size:9pt;
-                font-weight:bold; letter-spacing:.5px; margin:6px 0; }
+/* ── Header ── */
+.hd          { display:flex; justify-content:space-between; align-items:flex-start; }
+.hd-left .co { font-size:15pt; font-weight:900; color:#1a1a3e; letter-spacing:1.5px; line-height:1; }
+.hd-left .co-info { font-size:6.8pt; color:#888; line-height:1.7; margin-top:5px; }
+.hd-right    { text-align:right; }
+.hd-right .cp-label { font-size:7pt; font-weight:700; letter-spacing:3px; color:#aaa; text-transform:uppercase; }
+.hd-right .cp-title { font-size:16pt; font-weight:900; color:#1a1a3e; letter-spacing:1px; line-height:1.1; }
 
-  /* ── Items table ── */
-  .tbl        { width:100%; border-collapse:collapse; margin-top:4px; }
-  .tbl th     { background:#1a1a3e; color:#fff; padding:4px 5px; font-size:7.5pt;
-                text-align:center; border:1px solid #111; }
-  .tbl td     { padding:3px 5px; border:1px solid #ccc; vertical-align:top; font-size:7.5pt; }
-  .main-row td{ background:#fff; }
-  .sub-row td { background:#f5f5f5; color:#444; font-size:7pt; }
-  .num        { text-align:right; }
-  .ctr        { text-align:center; }
-  .foot td    { background:#1a1a3e; color:#fff; font-weight:bold;
-                padding:4px 6px; border:1px solid #111; font-size:8pt; }
-  .img-cell img { max-height:42px; max-width:55px; display:block; margin:auto; }
-  .desc-cell  { white-space:pre-wrap; max-width:200px; }
+/* ── Rule ── */
+.rule-thick  { border:none; border-top:2px solid #1a1a3e; margin:10px 0; }
+
+/* ── Meta row ── */
+.meta        { display:flex; gap:0; margin-bottom:14px; }
+.meta-cell   { flex:1; }
+.meta-cell + .meta-cell { border-left:1px solid #e8e8e8; padding-left:16px; margin-left:16px; }
+.meta-cell .ml { font-size:5.5pt; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#bbb; margin-bottom:3px; }
+.meta-cell .mv { font-size:8.5pt; font-weight:700; color:#1a1a2e; line-height:1.4; }
+.meta-cell .mv-sm { font-size:7.5pt; color:#555; line-height:1.5; }
+
+/* ── Project bar ── */
+.proj        { display:flex; align-items:stretch; gap:9px; margin-bottom:12px; }
+.proj-stripe { width:4px; background:#1a1a3e; border-radius:2px; flex-shrink:0; }
+.proj-body .pl { font-size:5.5pt; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#aaa; }
+.proj-body .pn { font-size:9.5pt; font-weight:900; color:#1a1a3e; letter-spacing:.3px; }
+
+/* ── Table ── */
+.tbl         { width:100%; border-collapse:collapse; }
+.tbl thead th {
+  font-size:5.8pt; font-weight:700; letter-spacing:.8px; text-transform:uppercase;
+  color:#999; text-align:center; padding:5px 4px 6px;
+  border-bottom:1.5px solid #1a1a3e;
+  white-space:nowrap;
+}
+.tbl thead th.tl { text-align:left; }
+.tbl tbody td {
+  padding:6px 5px; font-size:7.5pt; vertical-align:top;
+  border-bottom:1px solid #f0f0f0;
+}
+.tbl tbody tr.main td { background:#fff; }
+.tbl tbody tr.sub  td { background:#fafbff; color:#777; font-size:7pt; }
+.tbl tbody tr.sub  td:first-child { padding-left:14px; }
+
+.num  { text-align:right; }
+.ctr  { text-align:center; }
+.is-n { text-align:center; font-weight:700; color:#1a1a3e; }
+.is-s { text-align:center; font-weight:400; color:#bbb; }
+.bnd  { font-weight:700; color:#1a1a3e; }
+.img-cell { text-align:center; vertical-align:middle !important; padding:3px !important; }
+.img-cell img { max-height:44px; max-width:56px; object-fit:contain; display:block; margin:auto; }
+.sell-u { text-align:right; color:#444; }
+.sell-t { text-align:right; font-weight:700; color:#1a1a2e; }
+
+/* description label formatting */
+.dl  { font-size:6.2pt; font-weight:700; text-transform:uppercase; color:#888; letter-spacing:.3px; }
+.dv  { color:#252525; }
+
+/* ── Totals ── */
+.tot-wrap    { display:flex; justify-content:flex-end; margin-top:12px; }
+.tot-box     { border:1.5px solid #1a1a3e; border-radius:3px; overflow:hidden; min-width:230px; }
+.tot-row     { display:flex; justify-content:space-between; padding:5px 12px;
+               border-bottom:1px solid #eee; font-size:7.5pt; color:#555; }
+.tot-grand   { display:flex; justify-content:space-between; align-items:center;
+               padding:8px 12px; background:#1a1a3e; color:#fff; }
+.tot-grand .tg-lbl { font-size:6pt; font-weight:700; letter-spacing:2px; text-transform:uppercase; }
+.tot-grand .tg-val { font-size:12pt; font-weight:900; }
+
+/* ── Footer ── */
+.ft          { margin-top:16px; border-top:1px solid #eee; padding-top:7px;
+               display:flex; justify-content:space-between;
+               font-size:6pt; color:#bbb; letter-spacing:.4px; }
 </style>
 
-<!-- ── Header ───────────────────────────────────────────────── -->
-<table class="hdr">
-  <tr>
-    <td style="width:50%; vertical-align:top;">
-      <div class="co-name">NEWLINE MEA</div>
-      <div class="co-sub">Dubai, United Arab Emirates</div>
-      <div class="co-sub">TRN: 100569971400003 &nbsp;|&nbsp; Tel: +971 4 XXX XXXX</div>
-    </td>
-    <td style="width:50%; vertical-align:top; text-align:right;">
-      <div class="prop-title">COMMERCIAL PROPOSAL</div>
-      <table class="prop-meta" style="margin-left:auto;">
-        <tr><td style="text-align:right;"><strong>M/S:</strong></td><td>{{ doc.customer_name }}</td></tr>
-        <tr><td style="text-align:right;"><strong>ATT:</strong></td><td>{{ doc.nl_attention or "" }}</td></tr>
-        <tr><td style="text-align:right;"><strong>DATE:</strong></td><td>{{ doc.nl_project_date or doc.transaction_date }}</td></tr>
-        <tr><td style="text-align:right;"><strong>REF:</strong></td><td>{{ doc.nl_ref_number or doc.name }}</td></tr>
-      </table>
-    </td>
-  </tr>
-</table>
+<!-- ── HEADER ─────────────────────────────────────────────── -->
+<div class="hd">
+  <div class="hd-left">
+    <div class="co">NEWLINE MEA</div>
+    <div class="co-info">
+      Tecom, Dubai — UAE &nbsp;|&nbsp; Al Ameri Building, Office #206<br>
+      Tel: +971 4 431 6621 &nbsp;|&nbsp; Mob: +971 55 282 2723<br>
+      P.O. Box: 454747, Dubai — UAE &nbsp;|&nbsp; TRN: 100294664600003
+    </div>
+  </div>
+  <div class="hd-right">
+    <div class="cp-label">Lighting Solutions</div>
+    <div class="cp-title">Commercial Proposal</div>
+  </div>
+</div>
 
-<div class="proj-bar">PROJECT: {{ doc.nl_project_name or "" }}</div>
+<hr class="rule-thick">
 
-<!-- ── Items table ──────────────────────────────────────────── -->
+<!-- ── META ──────────────────────────────────────────────── -->
+<div class="meta">
+  <div class="meta-cell" style="flex:1.4;">
+    <div class="ml">Prepared for</div>
+    <div class="mv">{{ doc.customer_name }}</div>
+    {% if doc.address_display %}
+    <div class="mv-sm">
+      {{ doc.address_display | replace('<br>', '\n') | replace('<br/>', '\n') | striptags | replace('\n', '<br>') | safe }}
+    </div>
+    {% endif %}
+  </div>
+  <div class="meta-cell">
+    <div class="ml">Attention</div>
+    <div class="mv">{{ doc.nl_attention or "—" }}</div>
+  </div>
+  <div class="meta-cell">
+    <div class="ml">Reference</div>
+    <div class="mv">{{ doc.nl_ref_number or doc.name }}</div>
+  </div>
+  <div class="meta-cell">
+    <div class="ml">Date</div>
+    <div class="mv">{{ doc.nl_project_date or doc.transaction_date }}</div>
+  </div>
+</div>
+
+<!-- ── PROJECT ────────────────────────────────────────────── -->
+<div class="proj">
+  <div class="proj-stripe"></div>
+  <div class="proj-body">
+    <div class="pl">Project</div>
+    <div class="pn">{{ doc.nl_project_name or "" }}</div>
+  </div>
+</div>
+
+<!-- ── TABLE ─────────────────────────────────────────────── -->
 <table class="tbl">
-  <thead>
-    <tr>
-      <th style="width:3%">IS</th>
-      <th style="width:7%">PRODUCT<br>PACKAGE</th>
-      <th style="width:7%">SPECIFICATION</th>
-      <th style="width:5%">TYPE</th>
-      <th style="width:8%">LOCATION</th>
-      <th style="width:5%">IMAGE</th>
-      <th style="width:7%">PROPOSED<br>BRAND</th>
-      <th style="width:8%">PROPOSED<br>PRODUCT</th>
-      <th style="width:25%">PROPOSED DESCRIPTION</th>
-      <th style="width:4%">QTY</th>
-      <th style="width:3%">UOM</th>
-      <th style="width:9%">UNIT SELL<br>AED</th>
-      <th style="width:9%">TOTAL SELL<br>AED</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for line in doc.nl_quotation_lines %}
-    {% set is_sub = "." in (line.nl_is or "") %}
-    <tr class="{{ 'sub-row' if is_sub else 'main-row' }}">
-      <td class="ctr">{{ line.nl_is or "" }}</td>
-      <td>{{ line.nl_product_package or "" }}</td>
-      <td>{{ line.nl_specification or "" }}</td>
-      <td>{{ line.nl_product_type or "" }}</td>
-      <td>{{ line.nl_location or "" }}</td>
-      <td class="img-cell">{% if line.nl_image %}<img src="{{ line.nl_image }}">{% endif %}</td>
-      <td><strong>{{ line.nl_proposed_brand or "" }}</strong></td>
-      <td>{{ line.nl_proposed_product or "" }}</td>
-      <td class="desc-cell">{{ line.nl_proposed_description or "" }}</td>
-      <td class="ctr">{{ line.nl_qty or "" }}</td>
-      <td class="ctr">{{ line.nl_uom or "" }}</td>
-      <td class="num">
-        {% if line.nl_row_type in ["Main Item", "Driver"] and line.nl_unit_sell_aed %}
-          {{ "{:,.0f}".format(line.nl_unit_sell_aed) }}
-        {% endif %}
-      </td>
-      <td class="num">
-        {% if line.nl_row_type in ["Main Item", "Driver"] and line.nl_total_sell_aed %}
-          {{ "{:,.0f}".format(line.nl_total_sell_aed) }}
-        {% endif %}
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-  <tfoot>
-    <tr class="foot">
-      <td colspan="12" style="text-align:right; padding-right:10px;">TOTAL IN AED</td>
-      <td class="num">{{ "{:,.0f}".format(grand_sell.v) }}</td>
-    </tr>
-  </tfoot>
+<thead>
+  <tr>
+    <th style="width:3%">IS</th>
+    <th style="width:6%" class="tl">Package</th>
+    <th style="width:6%" class="tl">Specification</th>
+    <th style="width:4%">Type</th>
+    <th style="width:6%" class="tl">Location</th>
+    <th style="width:5%">Image</th>
+    <th style="width:6%" class="tl">Brand</th>
+    <th style="width:8%" class="tl">Product</th>
+    <th style="width:29%" class="tl">Description</th>
+    <th style="width:4%">Qty</th>
+    <th style="width:3%">MU</th>
+    <th style="width:8%">Unit Sell<br>AED</th>
+    <th style="width:12%">Total Sell<br>AED</th>
+  </tr>
+</thead>
+<tbody>
+{% for line in doc.items %}
+{% set is_sub = "." in (line.nl_is or "") %}
+<tr class="{{ 'sub' if is_sub else 'main' }}">
+  <td class="{{ 'is-s' if is_sub else 'is-n' }}">{{ line.nl_is or "" }}</td>
+  <td>{{ line.nl_product_package or "" }}</td>
+  <td>{{ line.nl_specification or "" }}</td>
+  <td class="ctr">{{ line.item_code or "" }}</td>
+  <td>{{ line.nl_location or "" }}</td>
+  <td class="img-cell">{% if line.nl_image %}<img src="{{ line.nl_image }}">{% endif %}</td>
+  <td class="bnd">{{ line.nl_proposed_brand or "" }}</td>
+  <td style="font-weight:600;">{{ line.nl_proposed_product or "" }}</td>
+  <td style="line-height:1.55;">
+    {%- for dline in (line.description or "").split('\n') -%}
+      {%- if dline.strip() -%}
+        {%- if ':' in dline -%}
+          {%- set parts = dline.split(':', 1) -%}
+          <span class="dl">{{ parts[0] | upper }}:</span>&nbsp;<span class="dv">{{ parts[1].strip() }}</span><br>
+        {%- else -%}
+          {{ dline }}<br>
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </td>
+  <td class="ctr" style="font-weight:{% if not is_sub %}600{% else %}400{% endif %};">
+    {{ "{:,.0f}".format(line.qty) if line.qty else "" }}
+  </td>
+  <td class="ctr" style="color:#999;">{{ line.uom or "" }}</td>
+  <td class="sell-u">{% if line.nl_unit_sell_aed %}{{ "{:,.0f}".format(line.nl_unit_sell_aed) }}{% endif %}</td>
+  <td class="sell-t">{% if line.nl_total_sell_aed %}{{ "{:,.2f}".format(line.nl_total_sell_aed) }}{% endif %}</td>
+</tr>
+{% endfor %}
+</tbody>
 </table>
+
+<!-- ── TOTAL BOX ──────────────────────────────────────────── -->
+<div class="tot-wrap">
+  <div class="tot-box">
+    <div class="tot-row">
+      <span>Total Items</span>
+      <span style="font-weight:600; color:#1a1a2e;">{{ "{:,.0f}".format(tot.qty) }}</span>
+    </div>
+    <div class="tot-grand">
+      <span class="tg-lbl">Total in AED</span>
+      <span class="tg-val">{{ "{:,.2f}".format(tot.sell) }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ─────────────────────────────────────────────── -->
+<div class="ft">
+  <span>NEWLINE MEA &nbsp;·&nbsp; info@newlinemea.com &nbsp;·&nbsp; www.newlinemea.com</span>
+  <span>This document is confidential and intended solely for the addressee.</span>
+  <span>TRN: 100294664600003</span>
+</div>
