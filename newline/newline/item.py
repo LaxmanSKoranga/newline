@@ -8,7 +8,6 @@ def build_description(doc, method=None):
 
 	lines = []
 
-	# ── Line 1: Brand | REF ───────────────────────────────────────────────
 	brand = val("brand")
 	ref   = val("nl_reference_number")
 	head  = "&nbsp;&nbsp;|&nbsp;&nbsp;".join(filter(None, [
@@ -18,12 +17,10 @@ def build_description(doc, method=None):
 	if head:
 		lines.append(head)
 
-	# ── Line 2: Item name ─────────────────────────────────────────────────
 	name = val("item_name")
 	if name:
 		lines.append(f"<strong>{name}</strong>")
 
-	# ── Line 3: Spec strip ────────────────────────────────────────────────
 	spec_fields = [
 		("W",       "nl_wattage"),
 		("LM",      "nl_lumen_output"),
@@ -42,12 +39,10 @@ def build_description(doc, method=None):
 	if specs:
 		lines.append(specs)
 
-	# ── Line 4: Dimensions ────────────────────────────────────────────────
 	dims = val("nl_dimensions")
 	if dims:
 		lines.append(f"<strong>DIM:</strong> {dims}")
 
-	# ── Components ────────────────────────────────────────────────────────
 	components = [r for r in (doc.nl_components or []) if r.component_type or r.reference_code]
 	if components:
 		lines.append("<hr style='margin:6px 0;border-color:#ddd;'>")

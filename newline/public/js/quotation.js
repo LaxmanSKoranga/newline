@@ -1,8 +1,6 @@
-// ─── NL Lighting Quotation ─ Client Script ───────────────────────────────────
 
 const NL_DEFAULTS = { exchange_rates: { EUR: 4.5, USD: 3.8, AED: 1.0, GBP: 5.2 } };
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
 function flt(v) { return parseFloat(v) || 0; }
 function fmt0(v) { return flt(v).toLocaleString("en-US", { maximumFractionDigits: 0 }); }
 function fmt2(v) { return flt(v).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
@@ -20,9 +18,8 @@ function detect_row_type(row) {
     return "Main Item";
 }
 
-// ── Formula engine ────────────────────────────────────────────────────────────
 function calc_row(frm, row) {
-    const qty  = flt(row.qty);                   // standard ERPNext field
+    const qty  = flt(row.qty);
     const uexw = flt(row.nl_uexw_value);
     const disc = flt(row.nl_discount_pct);
     const fx   = flt(row.nl_fx_rate) || get_fx(frm, row.nl_exw_currency || "USD");
@@ -53,7 +50,7 @@ function calc_row(frm, row) {
     row.nl_unit_sell_aed     = sell;
     row.nl_total_sell_aed    = sell * qty;
     row.nl_gm_pct            = sell > 0 ? (sell - land) / sell * 100 : 0;
-    // Push into ERPNext standard fields so grand_total stays correct
+
     row.rate   = sell;
     row.amount = sell * qty;
 }
@@ -62,7 +59,6 @@ function calc_all(frm) {
     frm.dirty();
 }
 
-// ── Per-cell formula tooltips ─────────────────────────────────────────────────
 function fx_tip(row) {
     const e  = flt(row.nl_exworks_unit_aed);
     return {
@@ -89,7 +85,6 @@ function fx_tip(row) {
     };
 }
 
-// ── Brand summary ─────────────────────────────────────────────────────────────
 function brand_summary(frm) {
     const data = {};
     (frm.doc.items || []).forEach(r => {
@@ -103,7 +98,6 @@ function brand_summary(frm) {
     return data;
 }
 
-// ── Column definitions ────────────────────────────────────────────────────────
 const GROUPS = [
     { label: "PROPOSED PRODUCT DETAILS",   bg: "#1a1a3e", n: 9 },
     { label: "",                            bg: "#1a1a3e", n: 1 },
@@ -120,17 +114,16 @@ const GROUPS = [
     { label: "PROJECT SPECIFICATIONS",      bg: "#5c1a00", n: 4 },
 ];
 
-// [field, label, width, align]  — qty/uom/item_code now use standard field names
 const COLS = [
     ["nl_is",                   "IS",           36, "c"],
     ["nl_product_package",      "PKG",          80, "l"],
     ["nl_specification",        "SPEC",         95, "l"],
-    ["item_code",               "TYPE",         85, "l"],   // was nl_product_type
+    ["item_code",               "TYPE",         85, "l"],
     ["nl_location",             "LOCATION",     80, "l"],
     ["nl_image",                "IMG",          54, "c"],
     ["nl_proposed_brand",       "BRAND",        80, "l"],
     ["nl_proposed_product",     "PRODUCT",     105, "l"],
-    ["description",             "DESCRIPTION", 190, "l"],   // was nl_proposed_description
+    ["description",             "DESCRIPTION", 190, "l"],
     ["__actions",               "",             44, "c"],
     ["nl_price_type",           "PRICE",        68, "c"],
     ["nl_supplier_brand",       "SUP.BRAND",    80, "l"],
@@ -162,8 +155,8 @@ const COLS = [
     ["nl_gm_pct",               "GM%",          50, "r"],
     ["nl_unit_sell_aed",        "UNIT SELL",    84, "r"],
     ["nl_total_sell_aed",       "TOT SELL",     84, "r"],
-    ["qty",                     "QTY",          48, "c"],   // was nl_qty
-    ["uom",                     "UOM",          42, "c"],   // was nl_uom
+    ["qty",                     "QTY",          48, "c"],
+    ["uom",                     "UOM",          42, "c"],
     ["nl_approval_risk",        "RISK",         58, "c"],
     ["nl_alt1_brand",           "ALT1 BRAND",   75, "l"],
     ["nl_alt1_product",         "ALT1 PRODUCT", 92, "l"],
@@ -178,7 +171,6 @@ const ROW_STYLE = {
 };
 const RISK_COLOR = { High: "#c0392b", Medium: "#d35400", Low: "#27ae60" };
 
-// ── Render a single cell ──────────────────────────────────────────────────────
 function cell_val(row, field) {
     const v = row[field];
     if (field === "__actions")
@@ -186,7 +178,7 @@ function cell_val(row, field) {
     if (field === "nl_image")
         return v ? `<img src="${v}" style="max-height:36px;max-width:46px;object-fit:contain;">` : "";
     if (field === "description") {
-        // Use DOMParser — handles all encodings ERPNext may use
+
         const tmp = document.createElement("div");
         tmp.innerHTML = v || "";
         const plain = (tmp.textContent || tmp.innerText || "").replace(/\s+/g," ").trim();
@@ -228,7 +220,6 @@ function cell_val(row, field) {
     return v || "";
 }
 
-// ── CSS ───────────────────────────────────────────────────────────────────────
 const WS_CSS = `
 <style>
 .nl-ws{font-family:Arial,sans-serif;font-size:11px;color:#212529;background:#eef0f4;padding:0;}
@@ -320,7 +311,6 @@ body.nl-fs-active .modal{z-index:2100!important;}
 .nl-bsum tfoot td{background:#f0f4ff;font-weight:700;border-top:2px solid #263547;}
 </style>`;
 
-// ── Formula reference ─────────────────────────────────────────────────────────
 const FORMULA_REF = [
     { l:"NET EXW",       f:"U.EXW x (1 - DISC%)",                            e:"e.g. 100 x (1 - 5%) = 95.00" },
     { l:"EXW UNIT AED",  f:"NET EXW x FX RATE",                              e:"e.g. 95 x 3.80 = 361.00" },
@@ -339,7 +329,6 @@ const FORMULA_REF = [
     { l:"FX RATE",       f:"Exchange Rates table (set in Project Details)",   e:"EUR / USD / GBP per AED" },
 ];
 
-// ── Form theme injection (once per load) ──────────────────────────────────────
 function inject_form_theme(frm) {
     if (frm.$wrapper.find("#nl-form-theme").length) return;
     frm.$wrapper.find(".layout-main-section").prepend(`
@@ -393,7 +382,6 @@ function inject_form_theme(frm) {
 </style>`);
 }
 
-// ── Top toggle button (compact) ───────────────────────────────────────────────
 function render_top_button(frm) {
     frm.$wrapper.find("#nl-top-toggle-btn").remove();
 
@@ -404,7 +392,7 @@ function render_top_button(frm) {
 
     let html;
     if (on) {
-        // Slim active strip — light bg, navy accent
+
         const meta = [
             proj ? `<span style="color:#1a1a3e;font-weight:600;">${proj}</span>` : "",
             ref  ? `<span style="color:#6070a0;">REF ${ref}</span>` : "",
@@ -435,7 +423,7 @@ function render_top_button(frm) {
   </button>
 </div>`;
     } else {
-        // Compact inactive — clean white card with colored accent
+
         html = `
 <div id="nl-top-toggle-btn" style="
     display:flex;align-items:center;gap:14px;
@@ -460,9 +448,8 @@ function render_top_button(frm) {
     frm.$wrapper.find(".layout-main-section").prepend(html);
 }
 
-// ── Render workspace ──────────────────────────────────────────────────────────
 function render_workspace(frm) {
-    // Get or create the workspace container (outside Frappe's form DOM)
+
     let $ws = frm.$wrapper.find("#nl-workspace-main");
     if (!$ws.length) {
         frm.$wrapper.find(".layout-main-section").append(
@@ -491,7 +478,6 @@ function render_workspace(frm) {
 
     let html = WS_CSS + `<div class="nl-ws" id="nl-ws-root">`;
 
-    // ── Top bar ───────────────────────────────────────────────────────────────
     html += `
 <div class="nl-bar">
   <div class="nl-pinfo">
@@ -520,7 +506,6 @@ function render_workspace(frm) {
   <button class="nl-ibtn" id="nl-excel-btn">&#8595; Excel</button>
 </div>`;
 
-    // ── Table ─────────────────────────────────────────────────────────────────
     html += `<div class="nl-wrap"><table class="nl-t"><thead>`;
 
     html += `<tr class="nl-grp"><th class="rn"></th>`;
@@ -581,7 +566,6 @@ function render_workspace(frm) {
     });
     html += `</tr></tbody></table></div>`;
 
-    // ── Formula reference ─────────────────────────────────────────────────────
     html += `
 <div class="nl-fref">
   <div class="nl-fref-hdr" id="nl-fref-toggle">
@@ -600,7 +584,6 @@ function render_workspace(frm) {
     });
     html += `</div></div></div>`;
 
-    // ── Brand summary ─────────────────────────────────────────────────────────
     const bd = brand_summary(frm);
     const brands = Object.keys(bd).sort();
     if (brands.length) {
@@ -642,18 +625,16 @@ function render_workspace(frm) {
 </div>`;
     }
 
-    html += `</div>`; // .nl-ws
+    html += `</div>`;
     $ws.html(html);
 }
 
-// ── Events ────────────────────────────────────────────────────────────────────
 function setup_events(frm) {
     frm.$wrapper.off(".nl-ws");
 
-    // Top button events (delegated — button is outside the workspace div)
     frm.$wrapper.on("click.nl-ws", "#nl-top-activate-btn", () => set_nl_mode(frm, true));
     frm.$wrapper.on("click.nl-ws", "#nl-top-exit-btn",     () => set_nl_mode(frm, false));
-    // Excel button in the active top strip (always visible)
+
     frm.$wrapper.on("click.nl-ws", "#nl-top-excel-btn", function() {
         if (!frm.doc.name || frm.doc.__islocal) {
             frappe.msgprint("Please save the quotation first before downloading Excel.");
@@ -724,7 +705,6 @@ function setup_events(frm) {
     });
 }
 
-// ── Mode toggle ───────────────────────────────────────────────────────────────
 function set_nl_mode(frm, enable) {
     if (!enable) $("body").removeClass("nl-fs-active");
     frm.doc.nl_mode = enable ? 1 : 0;
@@ -745,7 +725,6 @@ function set_nl_mode(frm, enable) {
     frm.refresh_header();
 }
 
-// ── Row dialog ────────────────────────────────────────────────────────────────
 function apply_row(frm, row, values) {
     Object.assign(row, values);
     if (!row.nl_fx_rate || values.nl_exw_currency)
@@ -762,19 +741,21 @@ function open_row_dialog(frm, row) {
         size: "large",
         fields: [
             { fieldtype:"Section Break", label:"Product Identity" },
-            { fieldtype:"Data",   fieldname:"nl_is",              label:"IS #",          default: row.nl_is },
+            { fieldtype:"Data",   fieldname:"nl_is",              label:"IS #",          default: row.nl_is,              reqd:1 },
             { fieldtype:"Select", fieldname:"nl_row_type",        label:"Row Type",      default: row.nl_row_type||"Main Item", options:"Main Item\nAccessory\nDriver" },
             { fieldtype:"Data",   fieldname:"nl_product_package", label:"Package",       default: row.nl_product_package },
             { fieldtype:"Select", fieldname:"nl_specification",   label:"Specification", default: row.nl_specification, options:"\nSpecified\nEqually Approved\nApproved Vendor List\nAlternative" },
-            { fieldtype:"Link",   fieldname:"item_code",          label:"Item Code",     default: row.item_code, options:"Item",
+            { fieldtype:"Link",   fieldname:"item_code",          label:"Item Code",     default: row.item_code, options:"Item", reqd:1,
               onchange: function() {
                   const code = d.get_value("item_code");
                   if (!code) return;
                   frappe.db.get_doc("Item", code).then(item => {
                       const upd = {};
+                      upd.item_name = item.item_name || "";
                       if (item.brand)                upd.nl_proposed_brand   = item.brand;
                       if (item.brand)                upd.nl_supplier_brand   = item.brand;
                       if (item.nl_reference_number)  upd.nl_proposed_product = item.nl_reference_number;
+                      else if (item.item_name)        upd.nl_proposed_product = item.item_name;
                       if (item.description)          upd.description         = item.description;
                       if (item.nl_ex_works_price)    upd.nl_uexw_value       = item.nl_ex_works_price;
                       if (item.nl_purchase_currency) upd.nl_exw_currency     = item.nl_purchase_currency;
@@ -783,20 +764,21 @@ function open_row_dialog(frm, row) {
                   });
               }
             },
+            { fieldtype:"Data",   fieldname:"item_name",          label:"Item Name",     default: row.item_name, read_only:1 },
             { fieldtype:"Data",   fieldname:"nl_location",        label:"Location",      default: row.nl_location },
             { fieldtype:"Column Break" },
-            { fieldtype:"Data",   fieldname:"nl_proposed_brand",   label:"Proposed Brand",   default: row.nl_proposed_brand },
-            { fieldtype:"Data",   fieldname:"nl_proposed_product", label:"Proposed Product", default: row.nl_proposed_product },
+            { fieldtype:"Data",   fieldname:"nl_proposed_brand",   label:"Proposed Brand",   default: row.nl_proposed_brand,   reqd:1 },
+            { fieldtype:"Data",   fieldname:"nl_proposed_product", label:"Proposed Product", default: row.nl_proposed_product, reqd:1 },
             { fieldtype:"Text Editor", fieldname:"description",      label:"Description",      default: row.description },
             { fieldtype:"Section Break", label:"Pricing (EXW)" },
             { fieldtype:"Select",  fieldname:"nl_price_type",     label:"Price Type", default: row.nl_price_type, options:"\nAccurate\nEstimated" },
             { fieldtype:"Data",    fieldname:"nl_supplier_brand", label:"Sup. Brand", default: row.nl_supplier_brand },
-            { fieldtype:"Currency",fieldname:"nl_uexw_value",     label:"U.EXW",      default: row.nl_uexw_value },
+            { fieldtype:"Currency",fieldname:"nl_uexw_value",     label:"U.EXW",      default: row.nl_uexw_value,  reqd:1 },
             { fieldtype:"Percent", fieldname:"nl_discount_pct",   label:"Discount %", default: row.nl_discount_pct },
             { fieldtype:"Select",  fieldname:"nl_exw_currency",   label:"Currency",   default: row.nl_exw_currency||"USD", options:"EUR\nUSD\nAED\nGBP" },
             { fieldtype:"Column Break" },
             { fieldtype:"Float",  fieldname:"nl_markup",          label:"Markup x",   default: row.nl_markup||1.5, precision:2 },
-            { fieldtype:"Float",  fieldname:"qty",                label:"Qty",        default: row.qty },
+            { fieldtype:"Float",  fieldname:"qty",                label:"Qty",        default: row.qty||1, reqd:1 },
             { fieldtype:"Link",   fieldname:"uom",                label:"UOM",        default: row.uom||"Nos", options:"UOM" },
             { fieldtype:"Select", fieldname:"nl_approval_risk",   label:"Risk",       default: row.nl_approval_risk, options:"\nHigh\nMedium\nLow" },
             { fieldtype:"Section Break", label:"Cost % Overrides (0 = use global)" },
@@ -848,7 +830,6 @@ function open_add_dialog(frm) {
     open_row_dialog(frm, nr);
 }
 
-// ── Frappe form hooks ─────────────────────────────────────────────────────────
 frappe.ui.form.on("Quotation", {
     onload(frm) {
         if (frm.is_new() && !(frm.doc.nl_exchange_rates||[]).length) {
@@ -864,13 +845,13 @@ frappe.ui.form.on("Quotation", {
 
     refresh(frm) {
         inject_form_theme(frm);
-        // Hide the Connections tab
+
         frm.$wrapper.find('.form-tabs-list .nav-link').filter(function() {
             return $(this).text().trim() === 'Connections';
         }).closest('li').hide();
         setup_events(frm);
         render_top_button(frm);
-        // hide retired nl_quotation_lines field if still in DB
+
         frm.set_df_property("nl_quotation_lines", "hidden", 1);
         const $alerts = frm.$wrapper.closest(".page-body").find(".form-message, .page-form-message");
         if (frm.doc.nl_mode) {
@@ -892,7 +873,6 @@ frappe.ui.form.on("Quotation", {
     nl_default_markup(frm){ (frm.doc.items||[]).forEach(r=>r.nl_markup   =flt(frm.doc.nl_default_markup)); calc_all(frm); render_workspace(frm); },
 });
 
-// ── Reverse sync: standard items table → NL fields ───────────────────────────
 frappe.ui.form.on("Quotation Item", {
     item_code(frm, cdt, cdn) {
         const row = frappe.get_doc(cdt, cdn);

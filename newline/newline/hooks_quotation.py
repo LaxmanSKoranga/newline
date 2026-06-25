@@ -6,7 +6,6 @@ _DEFAULT_RATES = {"EUR": 4.5, "USD": 3.8, "AED": 1.0, "GBP": 5.2}
 
 
 def before_save(doc, method=None):
-	# Prevent ERPNext's pricing-rule engine from overriding the rates we set below
 	doc.ignore_pricing_rule = 1
 
 	if not doc.nl_project_date:
@@ -20,7 +19,6 @@ def before_save(doc, method=None):
 
 
 def _migrate_nl_lines(doc):
-	"""One-time auto-migration: copy old nl_quotation_lines rows into doc.items."""
 	if doc.items:
 		return
 	old_lines = doc.get("nl_quotation_lines") or []
@@ -57,8 +55,6 @@ def _migrate_nl_lines(doc):
 		})
 
 
-# ── Exchange rates ────────────────────────────────────────────────────────────
-
 def _ensure_exchange_rates(doc):
 	existing = {r.currency for r in (doc.nl_exchange_rates or [])}
 	for currency, rate in _DEFAULT_RATES.items():
@@ -72,8 +68,6 @@ def _get_fx(doc, currency):
 			return flt(r.rate) or 1
 	return _DEFAULT_RATES.get(currency, 1)
 
-
-# ── Line calculations (now on doc.items) ─────────────────────────────────────
 
 def _calculate_lines(doc):
 	for line in (doc.items or []):
@@ -118,17 +112,12 @@ def _calculate_lines(doc):
 		line.nl_gm_pct           = ((unit_sell - landed) / unit_sell * 100) if unit_sell else 0
 
 
-# ── Push NL sell price into ERPNext's native rate/amount fields ───────────────
-
 def _finalize_item_totals(doc):
 	for item in (doc.items or []):
 		item.rate   = flt(item.nl_unit_sell_aed)
 		item.amount = flt(item.nl_total_sell_aed)
-	# Recalculate ERPNext's grand_total, net_total etc. from the updated rates
 	doc.run_method("calculate_taxes_and_totals")
 
-
-# ── Brand summary (now from doc.items) ───────────────────────────────────────
 
 def _rebuild_brand_summary(doc):
 	data = defaultdict(lambda: {"exw": 0.0, "landed": 0.0, "sell": 0.0})

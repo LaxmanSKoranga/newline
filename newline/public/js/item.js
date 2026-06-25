@@ -33,7 +33,6 @@ function build_auto_description(frm) {
 	const d = frm.doc;
 	const lines = [];
 
-	// ── Line 1: Brand | REF ───────────────────────────────────────────────
 	const brand = val(frm, "brand");
 	const ref   = val(frm, "nl_reference_number");
 	const head  = [
@@ -42,11 +41,9 @@ function build_auto_description(frm) {
 	].filter(Boolean).join("&nbsp;&nbsp;|&nbsp;&nbsp;");
 	if (head) lines.push(head);
 
-	// ── Line 2: Item name ─────────────────────────────────────────────────
 	const name = val(frm, "item_name");
 	if (name) lines.push(`<strong>${name}</strong>`);
 
-	// ── Line 3: Spec strip (pipe-separated, skip blanks) ──────────────────
 	const spec_fields = [
 		["W",      "nl_wattage"],
 		["LM",     "nl_lumen_output"],
@@ -66,11 +63,9 @@ function build_auto_description(frm) {
 		.join("&nbsp;&nbsp;|&nbsp;&nbsp;");
 	if (specs) lines.push(specs);
 
-	// ── Line 4: Dimensions (own line) ─────────────────────────────────────
 	const dims = val(frm, "nl_dimensions");
 	if (dims) lines.push(`<strong>DIM:</strong> ${dims}`);
 
-	// ── Components ────────────────────────────────────────────────────────
 	const rows = (d.nl_components || []).filter(r => r.component_type || r.reference_code);
 	if (rows.length) {
 		lines.push("<hr style='margin:6px 0;border-color:#ddd;'>");

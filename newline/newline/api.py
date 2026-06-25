@@ -6,8 +6,6 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import column_index_from_string, get_column_letter
 
-# ── Column definitions (mirrors quotation.js COLS, __actions skipped) ─────────
-# (col_letter, fieldname, label, width_px, is_formula)
 _COLS = [
 	("A",  "nl_is",                   "IS",            36,  False),
 	("B",  "nl_product_package",      "PKG",           80,  False),
@@ -89,8 +87,6 @@ _CCY_COLS  = {
 	"nl_unit_sell_aed","nl_total_sell_aed",
 }
 
-# ── Style helpers ─────────────────────────────────────────────────────────────
-
 def _fill(hex6):
 	return PatternFill(fgColor=hex6.lstrip("#"), fill_type="solid")
 
@@ -111,8 +107,6 @@ def _left_accent(color_hex):
 def _align(h="left", wrap=False):
 	return Alignment(horizontal=h, vertical="center", wrap_text=wrap)
 
-
-# ── Formula map ───────────────────────────────────────────────────────────────
 
 def _formula(field, r):
 	return {
@@ -147,14 +141,11 @@ def _num_fmt(field):
 	return "@"
 
 
-# ── Workbook builder ──────────────────────────────────────────────────────────
-
 def _build_workbook(doc):
 	wb = Workbook()
 	ws = wb.active
 	ws.title = "Costing Sheet"
 
-	# Row 1 — title
 	ws.merge_cells(f"A1:{_LAST_COL}1")
 	c = ws["A1"]
 	c.value     = "NEWLINE MEA  —  INTERNAL COSTING SHEET"
@@ -163,7 +154,6 @@ def _build_workbook(doc):
 	c.alignment = _align("center")
 	ws.row_dimensions[1].height = 28
 
-	# Row 2 — project info + exchange rates
 	proj = doc.nl_project_name  or ""
 	ref  = doc.nl_ref_number    or doc.name
 	date = str(doc.nl_project_date or doc.transaction_date or "")
@@ -186,7 +176,6 @@ def _build_workbook(doc):
 		ws[f"{lv}2"].font  = Font(size=8)
 	ws.row_dimensions[2].height = 18
 
-	# Row 3 — group headers
 	for c1, c2, label, color in _GROUPS:
 		ws.merge_cells(f"{c1}3:{c2}3") if c1 != c2 else None
 		cell = ws[f"{c1}3"]
@@ -196,7 +185,6 @@ def _build_workbook(doc):
 		cell.alignment = _align("center")
 	ws.row_dimensions[3].height = 20
 
-	# Row 4 — column headers
 	for col_l, field, label, width_px, _ in _COLS:
 		cell = ws[f"{col_l}4"]
 		cell.value     = label
@@ -208,7 +196,6 @@ def _build_workbook(doc):
 
 	ws.freeze_panes = "A5"
 
-	# Data rows
 	DATA_START = 5
 	lines = doc.items or []
 
@@ -221,7 +208,6 @@ def _build_workbook(doc):
 		for col_l, field, _lbl, _w, is_formula in _COLS:
 			cell = ws[f"{col_l}{r}"]
 
-			# value / formula
 			if is_formula:
 				cell.value = _formula(field, r)
 			else:
@@ -230,13 +216,11 @@ def _build_workbook(doc):
 
 			cell.number_format = _num_fmt(field)
 
-			# background tint
 			if col_l in _LANDED:   cell.fill = _fill("E8F0FA")
 			elif col_l in _SELL:   cell.fill = _fill("E8F5E9")
 			elif col_l in _FX:     cell.fill = _fill("FFFFF0")
 			else:                  cell.fill = _fill(bg)
 
-			# font
 			if col_l in _LANDED:
 				cell.font = Font(bold=True, size=9, color="0A2A4A")
 			elif col_l in _SELL:
@@ -250,7 +234,6 @@ def _build_workbook(doc):
 			else:
 				cell.font = Font(size=9, color="1A1A3E" if rt != "Accessory" else "555555")
 
-			# alignment
 			if field in ("nl_is","nl_price_type","nl_exw_currency","uom","nl_approval_risk"):
 				cell.alignment = _align("center")
 			elif _num_fmt(field) != "@":
@@ -258,14 +241,12 @@ def _build_workbook(doc):
 			else:
 				cell.alignment = _align("left", wrap=field == "description")
 
-			# border — IS col gets left accent
 			if col_l == "A":
 				accent = "1A1A3E" if rt == "Main Item" else "4A7AB5" if rt == "Driver" else "AAAAAA"
 				cell.border = _left_accent(accent)
 			else:
 				cell.border = _thin()
 
-	# Totals row
 	N     = DATA_START + len(lines) - 1
 	tot_r = N + 1
 	ws.row_dimensions[tot_r].height = 18
@@ -293,7 +274,6 @@ def _build_workbook(doc):
 		elif field == "qty":
 			cell.value = f"=SUM(AM{DATA_START}:AM{N})"; cell.number_format = "#,##0"
 
-	# Brand Summary
 	brands = {}
 	for line in lines:
 		if line.nl_row_type != "Main Item":
@@ -349,7 +329,6 @@ def _build_workbook(doc):
 			ws[f"H{dr}"].value = (d["sell"]/gs*100) if gs else 0; ws[f"H{dr}"].number_format = "0.0"
 			dr += 1
 
-		# totals
 		ws.row_dimensions[dr].height = 16
 		bdr = Border(top=Side(style="medium", color="263547"),
 		             bottom=Side(style="thin", color="D0D0D0"),
@@ -370,8 +349,6 @@ def _build_workbook(doc):
 	ws.sheet_view.showGridLines = True
 	return wb
 
-
-# ── Public API ────────────────────────────────────────────────────────────────
 
 @frappe.whitelist()
 def download_costing_excel(quotation):

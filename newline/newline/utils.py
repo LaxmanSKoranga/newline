@@ -12,7 +12,6 @@ def regen_all_descriptions():
 	frappe.db.commit()
 	print("Done.")
 
-	# Preview one
 	if items:
 		doc = frappe.get_doc("Item", items[0])
 		print(f"\nSample ({items[0]}):\n{doc.description}")
