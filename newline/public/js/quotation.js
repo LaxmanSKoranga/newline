@@ -99,19 +99,19 @@ function brand_summary(frm) {
 }
 
 const GROUPS = [
-    { label: "PROPOSED PRODUCT DETAILS",   bg: "#1a1a3e", n: 9 },
-    { label: "",                            bg: "#1a1a3e", n: 1 },
-    { label: "EXWORKS",                     bg: "#1e3a5f", n: 9 },
-    { label: "FREIGHT",                     bg: "#1a4731", n: 3 },
-    { label: "INSURANCE",                   bg: "#3d3416", n: 3 },
-    { label: "CUSTOMS",                     bg: "#4a1e1e", n: 3 },
-    { label: "SAMPLES",                     bg: "#2d1a4a", n: 3 },
-    { label: "LETTER OF CREDIT",            bg: "#1a3a3a", n: 3 },
-    { label: "LANDED AED",                  bg: "#0a2a4a", n: 2 },
-    { label: "SELLING",                     bg: "#1a3d1a", n: 4 },
-    { label: "QTY",                         bg: "#3d2000", n: 2 },
-    { label: "RISK",                        bg: "#3d1a2a", n: 1 },
-    { label: "PROJECT SPECIFICATIONS",      bg: "#5c1a00", n: 4 },
+    { label: "PROPOSED PRODUCT DETAILS", bg: "#e8eaf6", fg: "#1a1a3e", n: 9 },
+    { label: "",                          bg: "#e8eaf6", fg: "#1a1a3e", n: 1 },
+    { label: "EXWORKS",                   bg: "#ddeaf5", fg: "#1e3a5f", n: 9 },
+    { label: "FREIGHT",                   bg: "#e0f0e8", fg: "#1a4731", n: 3 },
+    { label: "INSURANCE",                 bg: "#f5f0e0", fg: "#3d3416", n: 3 },
+    { label: "CUSTOMS",                   bg: "#f5e8e8", fg: "#4a1e1e", n: 3 },
+    { label: "SAMPLES",                   bg: "#ede8f5", fg: "#2d1a4a", n: 3 },
+    { label: "LETTER OF CREDIT",          bg: "#e0f0f0", fg: "#1a3a3a", n: 3 },
+    { label: "LANDED AED",                bg: "#dceaf5", fg: "#0a2a4a", n: 2 },
+    { label: "SELLING",                   bg: "#e3f0e3", fg: "#1a3d1a", n: 4 },
+    { label: "QTY",                       bg: "#f5ece0", fg: "#3d2000", n: 2 },
+    { label: "RISK",                      bg: "#f5e3eb", fg: "#3d1a2a", n: 1 },
+    { label: "PROJECT SPECIFICATIONS",    bg: "#f5ece3", fg: "#5c1a00", n: 4 },
 ];
 
 const COLS = [
@@ -171,18 +171,50 @@ const ROW_STYLE = {
 };
 const RISK_COLOR = { High: "#c0392b", Medium: "#d35400", Low: "#27ae60" };
 
+const EDITABLE = {
+    nl_is:               { t:"text", w:34 },
+    nl_product_package:  { t:"text", w:78 },
+    nl_specification:    { t:"sel", opts:["","Specified","Equally Approved","Approved Vendor List","Alternative"], w:92 },
+    item_code:           { t:"link", options:"Item",  w:83 },
+    nl_location:         { t:"text", w:78 },
+    nl_proposed_brand:   { t:"link", options:"Brand", w:78 },
+    nl_proposed_product: { t:"text", w:103 },
+    description:         { t:"area", w:186 },
+    nl_price_type:       { t:"sel", opts:["","Accurate","Estimated"], w:65 },
+    nl_supplier_brand:   { t:"text", w:78 },
+    nl_uexw_value:       { t:"num",  w:75 },
+    nl_discount_pct:     { t:"num",  w:46 },
+    nl_exw_currency:     { t:"sel", opts:["EUR","USD","AED","GBP"], w:34 },
+    nl_markup:           { t:"num",  w:40 },
+    nl_ship_pct:         { t:"num",  w:36 },
+    nl_ins_pct:          { t:"num",  w:36 },
+    nl_cus_pct:          { t:"num",  w:36 },
+    nl_sam_pct:          { t:"num",  w:36 },
+    nl_lc_pct:           { t:"num",  w:36 },
+    qty:                 { t:"num",  w:46 },
+    uom:                 { t:"text", w:40 },
+    nl_approval_risk:    { t:"sel", opts:["","High","Medium","Low"], w:55 },
+    nl_alt1_brand:       { t:"text", w:73 },
+    nl_alt1_product:     { t:"text", w:90 },
+    nl_alt2_brand:       { t:"text", w:73 },
+    nl_alt2_product:     { t:"text", w:90 },
+};
+const NUM_FIELDS = new Set(["nl_uexw_value","nl_discount_pct","nl_markup",
+    "nl_ship_pct","nl_ins_pct","nl_cus_pct","nl_sam_pct","nl_lc_pct","qty"]);
+
 function cell_val(row, field) {
     const v = row[field];
     if (field === "__actions")
-        return `<button class="nl-edit-btn" data-rowname="${row.name}" title="Edit row">&#9998;</button>`;
+        return `<button class="nl-edit-btn"  data-rowname="${row.name}" title="Inline edit">&#9998;</button>` +
+               `<button class="nl-popup-btn" data-rowname="${row.name}" title="Open full dialog">&#9783;</button>` +
+               `<button class="nl-del-btn"   data-rowname="${row.name}" title="Delete row">&#128465;</button>`;
     if (field === "nl_image")
         return v ? `<img src="${v}" style="max-height:36px;max-width:46px;object-fit:contain;">` : "";
     if (field === "description") {
-
         const tmp = document.createElement("div");
         tmp.innerHTML = v || "";
-        const plain = (tmp.textContent || tmp.innerText || "").replace(/\s+/g," ").trim();
-        return `<span class="nl-clip" title="${plain.replace(/"/g,"")}">${plain}</span>`;
+        const plain = (tmp.textContent || tmp.innerText || "").trim();
+        return `<span class="nl-desc">${plain}</span>`;
     }
     if (field === "nl_proposed_brand")
         return v ? `<strong>${v}</strong>` : "";
@@ -222,50 +254,62 @@ function cell_val(row, field) {
 
 const WS_CSS = `
 <style>
-.nl-ws{font-family:Arial,sans-serif;font-size:11px;color:#212529;background:#eef0f4;padding:0;}
+.nl-ws{font-family:Arial,sans-serif;font-size:11px;color:#212529;background:#f4f6f9;padding:0;}
 .nl-ws *{box-sizing:border-box;}
 .nl-ws.nl-fs{position:fixed;top:0;left:0;right:0;bottom:0;z-index:2000;
-  display:flex;flex-direction:column;overflow:hidden;background:#eef0f4;}
+  display:flex;flex-direction:column;overflow:hidden;background:#f4f6f9;}
 .nl-ws.nl-fs .nl-wrap{max-height:none!important;flex:1;}
 .nl-ws.nl-fs .nl-bar{border-radius:0;}
 .nl-bar{display:flex;align-items:center;flex-wrap:wrap;gap:4px;
-  background:#1a1a3e;color:#fff;padding:8px 12px;border-radius:6px 6px 0 0;flex-shrink:0;}
+  background:#f8f9fc;color:#1a1a3e;padding:8px 12px;border-radius:6px 6px 0 0;
+  flex-shrink:0;border-bottom:2px solid #dde3ee;}
 .nl-pinfo{display:flex;align-items:center;gap:5px;font-size:10.5px;margin-right:6px;}
-.nl-pinfo .lbl{color:#7080a0;font-size:8.5px;font-weight:700;text-transform:uppercase;}
-.nl-pinfo .val{color:#fff;font-weight:600;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.nl-pinfo .sp{color:#2a3a5e;margin:0 1px;}
-.nl-ctrl{display:flex;align-items:center;gap:3px;background:#212d4e;border-radius:4px;padding:3px 7px;}
-.nl-ctrl label{font-size:8.5px;font-weight:700;color:#7080a0;text-transform:uppercase;white-space:nowrap;}
-.nl-ctrl input{width:44px;background:#161e38;border:1px solid #2a3a58;border-radius:3px;
-  padding:2px 4px;font-size:10.5px;color:#fff;text-align:right;}
-.nl-ctrl input:focus{outline:1px solid #5080b0;background:#0c142a;}
+.nl-pinfo .lbl{color:#6070a0;font-size:8.5px;font-weight:700;text-transform:uppercase;}
+.nl-pinfo .val{color:#1a1a3e;font-weight:600;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.nl-pinfo .sp{color:#c0c8d8;margin:0 1px;}
+.nl-ctrl{display:flex;align-items:center;gap:3px;background:#eef1f8;border:1px solid #dde3ee;border-radius:4px;padding:3px 7px;}
+.nl-ctrl label{font-size:8.5px;font-weight:700;color:#6070a0;text-transform:uppercase;white-space:nowrap;}
+.nl-ctrl input{width:44px;background:#fff;border:1px solid #ccd3e0;border-radius:3px;
+  padding:2px 4px;font-size:10.5px;color:#1a1a3e;text-align:right;}
+.nl-ctrl input:focus{outline:1px solid #5080b0;background:#f8fbff;}
 .nl-add-btn{background:#27ae60;color:#fff;border:none;border-radius:4px;padding:5px 12px;
   font-size:10px;font-weight:700;cursor:pointer;white-space:nowrap;margin-left:4px;}
 .nl-add-btn:hover{background:#219d55;}
-.nl-ibtn{background:transparent;color:#7080a0;border:1px solid #2a3a58;border-radius:4px;
+.nl-ibtn{background:#fff;color:#5060a0;border:1px solid #ccd3e0;border-radius:4px;
   padding:4px 9px;font-size:10px;cursor:pointer;white-space:nowrap;}
-.nl-ibtn:hover{color:#fff;border-color:#5080b0;background:#212d4e;}
-.nl-std-btn{background:transparent;color:#7080a0;border:1px solid #2a3a58;border-radius:4px;
+.nl-ibtn:hover{color:#1a1a3e;border-color:#5080b0;background:#f0f4ff;}
+.nl-std-btn{background:#fff;color:#5060a0;border:1px solid #ccd3e0;border-radius:4px;
   padding:4px 9px;font-size:10px;cursor:pointer;white-space:nowrap;margin-left:auto;}
-.nl-std-btn:hover{color:#fff;border-color:#5080b0;}
-.nl-wrap{overflow:auto;border:1px solid #c4c8d0;border-top:none;
+.nl-std-btn:hover{color:#1a1a3e;border-color:#5080b0;}
+.nl-wrap{overflow:auto;border:1px solid #dde3ee;border-top:none;
   border-radius:0 0 6px 6px;max-height:calc(100vh - 180px);background:#fff;}
 .nl-t{border-collapse:collapse;width:max-content;font-size:10.5px;}
 .nl-t td,.nl-t th{border-right:1px solid #d4d8de;border-bottom:1px solid #d4d8de;
   padding:3px 5px;white-space:nowrap;vertical-align:middle;}
-.nl-t .rn{background:#f0f2f6;color:#9090a0;font-size:9px;text-align:center;
-  border-right:2px solid #c4c8d0;min-width:30px;width:30px;
+.nl-t .rn{background:#f4f6f9;color:#9090a0;font-size:9px;text-align:center;
+  border-right:2px solid #cdd5e0;min-width:30px;width:30px;
   position:sticky;left:0;z-index:4;}
-.nl-grp th{padding:5px 4px;font-size:9px;font-weight:700;color:#fff;text-align:center;
-  letter-spacing:.7px;border-right:2px solid rgba(255,255,255,.2);
+.nl-grp th{padding:5px 4px;font-size:9px;font-weight:700;text-align:center;
+  letter-spacing:.7px;border-right:2px solid rgba(0,0,0,.08);
   position:sticky;top:0;z-index:13;}
-.nl-grp .rn{background:#111828!important;border-right:2px solid rgba(255,255,255,.2);}
-.nl-hdr th{font-size:9px;font-weight:700;color:#b8c8e0;text-align:center;
-  background:#263547;padding:4px 4px;
-  border-right:1px solid rgba(255,255,255,.12);border-bottom:2px solid #111828;
+.nl-grp-th{cursor:pointer;user-select:none;}
+.nl-grp-th:hover{filter:brightness(.96);}
+.nl-caret{font-size:8px;margin-left:4px;opacity:.6;}
+.nl-grp-collapsed{display:none!important;}
+.nl-col-lbl{display:inline;}
+.nl-stub-lbl{display:none;}
+.nl-stub-active{min-width:22px!important;max-width:22px!important;width:22px!important;padding:0!important;overflow:hidden!important;}
+.nl-hdr .nl-stub-active .nl-col-lbl{display:none!important;}
+.nl-hdr .nl-stub-active .nl-stub-lbl{display:block!important;writing-mode:vertical-lr;font-size:6.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:4px 2px;opacity:.75;white-space:nowrap;}
+.nl-collapsed-hdr{min-width:22px!important;max-width:22px!important;overflow:hidden!important;font-size:0!important;padding:3px 0!important;}
+.nl-collapsed-hdr .nl-caret{font-size:13px!important;opacity:1;margin:0;}
+.nl-grp .rn{background:#f0f2f6!important;border-right:2px solid #cdd5e0;}
+.nl-hdr th{font-size:9px;font-weight:700;color:#2a3a5a;text-align:center;
+  background:#f0f4f8;padding:4px 4px;
+  border-right:1px solid #d4d8de;border-bottom:2px solid #cdd5e0;
   position:sticky;top:31px;z-index:12;}
-.nl-hdr .rn{background:#263547;position:sticky;left:0;z-index:20;top:31px;}
-.nl-hdr th.stk0{position:sticky;left:30px;z-index:20;background:#263547;}
+.nl-hdr .rn{background:#f0f4f8;position:sticky;left:0;z-index:20;top:31px;}
+.nl-hdr th.stk0{position:sticky;left:30px;z-index:20;background:#f0f4f8;}
 .nl-t tbody tr:hover td{background:#fffde7!important;}
 .nl-t tbody tr:hover .rn{background:#e8e8f0!important;}
 .nl-t td.stk0{position:sticky;left:30px;z-index:5;border-right:3px solid #c4c8d0;}
@@ -280,14 +324,20 @@ const WS_CSS = `
 .nl-tot .rn{background:#080e1c!important;color:#505070;}
 .nl-tot .tl{color:#7bb8f5;}
 .nl-tot .ts{color:#7cf59d;}
+.nl-popup-btn{background:none;border:1px solid #c8d4e8;border-radius:3px;
+  padding:1px 4px;cursor:pointer;font-size:11px;color:#3a5a9a;margin-left:2px;line-height:1;}
+.nl-popup-btn:hover{background:#3a5a9a;color:#fff;border-color:#3a5a9a;}
+.nl-del-btn{background:none;border:1px solid #f0c0c0;border-radius:3px;
+  padding:1px 4px;cursor:pointer;font-size:11px;color:#c0392b;margin-left:2px;line-height:1;}
+.nl-del-btn:hover{background:#c0392b;color:#fff;border-color:#c0392b;}
 .nl-edit-btn{background:none;border:1px solid #c0c8d8;border-radius:3px;
   padding:1px 6px;cursor:pointer;font-size:12px;color:#555;}
 .nl-edit-btn:hover{background:#1a1a3e;color:#fff;border-color:#1a1a3e;}
 .nl-clip{display:block;overflow:hidden;text-overflow:ellipsis;max-width:188px;}
-.nl-fref{margin-top:8px;background:#fff;border:1px solid #c4c8d0;border-radius:6px;overflow:hidden;}
-.nl-fref-hdr{background:#263547;color:#b8c8e0;padding:8px 14px;font-size:10.5px;
+.nl-fref{margin-top:8px;background:#fff;border:1px solid #dde3ee;border-radius:6px;overflow:hidden;}
+.nl-fref-hdr{background:#f0f4f8;color:#2a3a5a;padding:8px 14px;font-size:10.5px;
   font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;user-select:none;}
-.nl-fref-hdr:hover{background:#2f4358;}
+.nl-fref-hdr:hover{background:#e8eef5;}
 .nl-fref-hdr .hint{font-weight:400;color:#7080a0;font-size:9px;}
 .nl-fref-hdr .arr{margin-left:auto;font-size:10px;color:#7080a0;}
 .nl-fref-body{display:none;padding:12px 16px;background:#f8f9fc;}
@@ -298,7 +348,7 @@ const WS_CSS = `
 .nl-fi .fi-e{font-size:9.5px;color:#777;margin-top:3px;}
 body.nl-fs-active .modal-backdrop{z-index:2050!important;}
 body.nl-fs-active .modal{z-index:2100!important;}
-.nl-bsum{margin-top:8px;border:1px solid #c4c8d0;border-radius:6px;overflow:hidden;}
+.nl-bsum{margin-top:8px;border:1px solid #dde3ee;border-radius:6px;overflow:hidden;}
 .nl-bsum-hdr{background:#1a1a3e;color:#fff;padding:8px 14px;font-size:11px;font-weight:700;
   display:flex;align-items:center;letter-spacing:.5px;}
 .nl-bsum-hdr .bst{margin-left:auto;font-size:10px;color:#aab4d0;}
@@ -309,6 +359,25 @@ body.nl-fs-active .modal{z-index:2100!important;}
 .nl-bsum td{padding:3px 12px;border-bottom:1px solid #e8eaf0;text-align:right;border-right:1px solid #e8eaf0;}
 .nl-bsum td:first-child{text-align:left;font-weight:600;}
 .nl-bsum tfoot td{background:#f0f4ff;font-weight:700;border-top:2px solid #263547;}
+.nl-desc-cell{white-space:normal!important;vertical-align:top!important;}
+.nl-desc{display:block;word-break:break-word;max-width:188px;line-height:1.4;white-space:normal;}
+.nl-editing td{background:#fffef0!important;}
+.nl-ie{font-size:10px;padding:2px 3px;border:1px solid #aab8d0;border-radius:2px;
+  background:#fffef8;outline:none;box-sizing:border-box;}
+.nl-ie:focus{border-color:#4a7ab5;background:#fff;}
+.nl-ie[type=number]{text-align:right;}
+textarea.nl-ie{resize:vertical;min-height:52px;}
+select.nl-ie{max-width:100%;}
+.nl-save-inline{background:#27ae60;color:#fff;border:none;border-radius:3px;
+  padding:2px 6px;cursor:pointer;font-size:13px;margin-right:2px;}
+.nl-cancel-inline{background:#e74c3c;color:#fff;border:none;border-radius:3px;
+  padding:2px 6px;cursor:pointer;font-size:13px;}
+.nl-link-drop{background:#fff;border:1px solid #b8c8e0;border-radius:5px;box-shadow:0 4px 14px rgba(0,0,0,.18);max-height:220px;overflow-y:auto;}
+.nl-link-opt{padding:6px 10px;cursor:pointer;font-size:11px;white-space:nowrap;border-bottom:1px solid #f0f4f8;color:#1a2a4a;}
+.nl-link-opt:last-child{border-bottom:none;}
+.nl-link-opt:hover{background:#e8f0fe;color:#1a3a8a;}
+.nl-add-row-tr{cursor:pointer;}
+.nl-add-row-tr:hover td{background:#f0f7ff!important;color:#5080b0!important;}
 </style>`;
 
 const FORMULA_REF = [
@@ -448,6 +517,224 @@ function render_top_button(frm) {
     frm.$wrapper.find(".layout-main-section").prepend(html);
 }
 
+function init_link_input(frm, row, $tr, $inp) {
+    const doctype = $inp.data("linktype");
+    const field   = $inp.data("field");
+    let $drop = null;
+
+    function close_drop() { if ($drop) { $drop.remove(); $drop = null; } }
+
+    let _stimer = null;
+    function do_search(txt) {
+        clearTimeout(_stimer);
+        _stimer = setTimeout(() => {
+            const filter_arg = txt
+                ? [["name", "like", "%" + txt + "%"]]
+                : [];
+            frappe.call({
+                method: "frappe.client.get_list",
+                args: {
+                    doctype: doctype,
+                    fields: ["name"],
+                    filters: filter_arg,
+                    limit_page_length: 12,
+                    order_by: "name asc"
+                },
+                callback(r) {
+                    close_drop();
+                    const list = r.message || [];
+                    if (!list.length) return;
+                    $drop = $('<div class="nl-link-drop">');
+                    list.forEach(item => {
+                        const $opt = $(`<div class="nl-link-opt">${frappe.utils.escape_html(item.name)}</div>`);
+                        $opt.on("mousedown", function(e) {
+                            e.preventDefault();
+                            $inp.val(item.name);
+                            close_drop();
+                            if (field === "item_code") {
+                                frappe.call({
+                                    method: "frappe.client.get",
+                                    args: { doctype: "Item", name: item.name },
+                                    callback(res) {
+                                        if (!res.message) return;
+                                        const it = res.message;
+
+                                        if (it.item_name) row.item_name = it.item_name;
+
+                                        const prod_val = it.nl_reference_number || it.item_name || "";
+                                        if (prod_val) {
+                                            const $prod = $tr.find('[data-field="nl_proposed_product"]');
+                                            if ($prod.length && !$prod.val().trim()) {
+                                                $prod.val(prod_val);
+                                                row.nl_proposed_product = prod_val;
+                                            }
+                                        }
+
+                                        const brand_val = it.brand || "";
+                                        if (brand_val) {
+                                            const $brand = $tr.find('[data-field="nl_proposed_brand"]');
+                                            if ($brand.length && !$brand.val().trim()) {
+                                                $brand.val(brand_val);
+                                                row.nl_proposed_brand = brand_val;
+                                            }
+                                        }
+
+                                        const $desc = $tr.find('[data-field="description"]');
+                                        if ($desc.length && !$desc.val().trim()) {
+                                            const tmp = document.createElement("div");
+                                            tmp.innerHTML = it.description || "";
+                                            $desc.val((tmp.textContent || tmp.innerText || "").trim());
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                        $drop.append($opt);
+                    });
+                    const rect = $inp[0].getBoundingClientRect();
+                    $drop.css({
+                        position: "fixed",
+                        top:  (rect.bottom + 2) + "px",
+                        left: rect.left + "px",
+                        "min-width": Math.max(rect.width, 200) + "px",
+                        "z-index": 99999
+                    });
+                    $("body").append($drop);
+                }
+            });
+        }, 100);
+    }
+
+    $inp.on("focus.nllink", function() { do_search($(this).val().trim()); });
+    $inp.on("click.nllink",  function() { if (!$drop) do_search($(this).val().trim()); });
+    $inp.on("input.nllink",  function() { do_search($(this).val().trim()); });
+    $inp.on("blur.nllink",   () => setTimeout(close_drop, 250));
+    $inp.on("keydown.nllink", function(e) {
+        if (e.key === "Escape") { close_drop(); }
+        if (e.key === "ArrowDown" && $drop) {
+            $drop.find(".nl-link-opt").first().trigger("focus");
+        }
+    });
+}
+
+function enter_edit_mode(frm, row, $tr) {
+    if ($tr.hasClass("nl-editing")) return;
+    $tr.addClass("nl-editing");
+    $tr.find("[data-field]").each(function() {
+        const f  = $(this).data("field");
+        if (f === "__actions") {
+            $(this).html(
+                `<button class="nl-save-inline" data-rowname="${row.name}" title="Save">&#10003;</button>` +
+                `<button class="nl-cancel-inline" title="Cancel">&#10007;</button>`
+            );
+            return;
+        }
+        const ed = EDITABLE[f];
+        if (!ed) return;
+        const raw = row[f] !== undefined && row[f] !== null ? row[f] : "";
+        let inp;
+        if (ed.t === "area") {
+            const tmp2 = document.createElement("div");
+            tmp2.innerHTML = String(raw);
+            const plain = (tmp2.textContent || tmp2.innerText || "").trim();
+            inp = `<textarea class="nl-ie" data-field="${f}" style="width:${ed.w}px;">${plain}</textarea>`;
+        } else if (ed.t === "sel") {
+            const opts = ed.opts.map(o => `<option value="${o}"${String(raw)===o?" selected":""}>${o||"—"}</option>`).join("");
+            inp = `<select class="nl-ie" data-field="${f}" style="width:${ed.w}px;">${opts}</select>`;
+        } else if (ed.t === "link") {
+            inp = `<input type="text" class="nl-ie nl-link-inp" data-field="${f}" data-linktype="${ed.options}" value="${String(raw).replace(/"/g,"&quot;")}" style="width:${ed.w}px;" autocomplete="off">`;
+        } else {
+            inp = `<input type="${ed.t==="num"?"number":"text"}" class="nl-ie" data-field="${f}" value="${String(raw).replace(/"/g,"&quot;")}" style="width:${ed.w}px;">`;
+        }
+        $(this).html(inp);
+    });
+    $tr.find(".nl-link-inp").each(function() { init_link_input(frm, row, $tr, $(this)); });
+    $tr.find(".nl-ie").first().focus();
+}
+
+function collect_and_save(frm, row, $tr) {
+    const values = {};
+    $tr.find(".nl-ie").each(function() {
+        const f = $(this).data("field");
+        const v = $(this).val();
+        values[f] = NUM_FIELDS.has(f) ? (parseFloat(v) || 0) : v;
+    });
+
+    const MANDATORY = {
+        item_code:           "Item Code (TYPE)",
+        nl_proposed_brand:   "Proposed Brand",
+        nl_proposed_product: "Proposed Product",
+    };
+    const missing = Object.entries(MANDATORY)
+        .filter(([f]) => !String(values[f] || "").trim())
+        .map(([, lbl]) => `<b>${lbl}</b>`);
+    if (missing.length) {
+        frappe.msgprint({ title: "Required Fields", indicator: "red",
+            message: `Please fill: ${missing.join(", ")}` });
+        return;
+    }
+
+    if (!(values.qty > 0)) {
+        frappe.msgprint({ title: "Invalid Quantity", indicator: "red",
+            message: "Quantity must be greater than 0." });
+        $tr.find('[data-field="qty"]').val(1).focus();
+        return;
+    }
+
+    apply_row(frm, row, values);
+}
+
+function add_row_inline(frm) {
+    if (frm.doc.docstatus !== 0) return;
+    const nr = frappe.model.add_child(frm.doc, "Quotation Item", "items");
+    const nums = (frm.doc.items||[]).map(r => parseInt(r.nl_is)||0).filter(n => n > 0);
+    nr.nl_is           = nums.length ? String(Math.max(...nums) + 1) : "1";
+    nr.nl_row_type     = "Main Item";
+    nr.qty             = 1;
+    nr.uom             = "Nos";
+    nr.nl_markup       = flt(frm.doc.nl_default_markup)  || 1.5;
+    nr.nl_ship_pct     = flt(frm.doc.nl_freight_pct)     || 10;
+    nr.nl_ins_pct      = flt(frm.doc.nl_insurance_pct)   || 1;
+    nr.nl_cus_pct      = flt(frm.doc.nl_customs_pct)     || 6;
+    nr.nl_sam_pct      = flt(frm.doc.nl_samples_pct)     || 1;
+    nr.nl_lc_pct       = flt(frm.doc.nl_lc_pct)          || 2;
+    nr.nl_exw_currency = "USD";
+    frm.dirty();
+    render_workspace(frm);
+    const $newTr = frm.$wrapper.find(`tr[data-rowname="${nr.name}"]`);
+    if ($newTr.length) {
+        enter_edit_mode(frm, nr, $newTr);
+        $newTr[0].scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+}
+
+const COLLAPSE_KEY = "nl_ws_col_collapse";
+function get_collapsed() {
+    try { return JSON.parse(localStorage.getItem(COLLAPSE_KEY) || "{}"); } catch { return {}; }
+}
+function save_collapsed(obj) { localStorage.setItem(COLLAPSE_KEY, JSON.stringify(obj)); }
+
+let _colToGroup = [], _colStub = {}, _collapsedColspan = {};
+let _ws_fullscreen = false;
+
+function _do_collapse($ws, gi) {
+    $ws.find(`[data-grp="${gi}"]`).not(".nl-grp-th").not(`[data-grp-stub="${gi}"]`).not("[data-no-collapse]").addClass("nl-grp-collapsed");
+    $ws.find(`[data-grp-stub="${gi}"]`).addClass("nl-stub-active");
+    $ws.find(`.nl-grp-th[data-grp="${gi}"]`).attr("colspan", _collapsedColspan[gi] || 1).addClass("nl-collapsed-hdr");
+    $ws.find(`.nl-grp-th[data-grp="${gi}"] .nl-caret`).text("►");
+}
+
+function _do_expand($ws, gi) {
+    $ws.find(`[data-grp="${gi}"]`).not(".nl-grp-th").removeClass("nl-grp-collapsed nl-stub-active");
+    $ws.find(`.nl-grp-th[data-grp="${gi}"]`).attr("colspan", GROUPS[gi].n).removeClass("nl-collapsed-hdr");
+    $ws.find(`.nl-grp-th[data-grp="${gi}"] .nl-caret`).text("▼");
+}
+
+function apply_collapse($ws) {
+    const state = get_collapsed();
+    GROUPS.forEach((g, gi) => { if (state[gi]) _do_collapse($ws, gi); });
+}
+
 function render_workspace(frm) {
 
     let $ws = frm.$wrapper.find("#nl-workspace-main");
@@ -508,14 +795,43 @@ function render_workspace(frm) {
 
     html += `<div class="nl-wrap"><table class="nl-t"><thead>`;
 
+    _colToGroup = [];
+    GROUPS.forEach((g, gi) => { for (let i = 0; i < g.n; i++) _colToGroup.push(gi); });
+
+    _colStub = {};
+    _colToGroup.forEach((gi, ci) => {
+        if (gi in _colStub) return;
+        if (COLS[ci][0] === "nl_is" || !GROUPS[gi].label) return;
+        _colStub[gi] = ci;
+    });
+
+    _collapsedColspan = {};
+    GROUPS.forEach((g, gi) => {
+        let cnt = 0;
+        _colToGroup.forEach((g2, ci) => {
+            if (g2 !== gi) return;
+            if (COLS[ci][0] === "nl_is" || _colStub[gi] === ci) cnt++;
+        });
+        _collapsedColspan[gi] = Math.max(cnt, 1);
+    });
+
     html += `<tr class="nl-grp"><th class="rn"></th>`;
-    GROUPS.forEach(g => {
-        html += `<th colspan="${g.n}" style="background:${g.bg};">${g.label}</th>`;
+    GROUPS.forEach((g, gi) => {
+        const grpCls  = g.label ? `nl-grp-th` : ``;
+        const caret   = g.label ? `<span class="nl-caret">&#9660;</span>` : "";
+        html += `<th colspan="${g.n}" class="${grpCls}" data-grp="${gi}" style="background:${g.bg};color:${g.fg};">${g.label}${caret}</th>`;
     });
     html += `</tr><tr class="nl-hdr"><th class="rn">#</th>`;
-    COLS.forEach(([f, lbl, w]) => {
-        const cls = f === "nl_is" ? " stk0" : "";
-        html += `<th class="${cls}" style="min-width:${w}px;width:${w}px;">${lbl}</th>`;
+    COLS.forEach(([f, lbl, w], ci) => {
+        const gi     = _colToGroup[ci];
+        const cls    = f === "nl_is" ? " stk0" : "";
+        const noC    = f === "nl_is" ? ` data-no-collapse` : "";
+        const isStub = _colStub[gi] === ci;
+        const stubA  = isStub ? ` data-grp-stub="${gi}"` : "";
+        const inner  = (isStub && GROUPS[gi].label)
+            ? `<span class="nl-col-lbl">${lbl}</span><span class="nl-stub-lbl">${GROUPS[gi].label}</span>`
+            : `<span class="nl-col-lbl">${lbl}</span>`;
+        html += `<th class="${cls}" data-grp="${gi}"${noC}${stubA} style="min-width:${w}px;width:${w}px;">${inner}</th>`;
     });
     html += `</tr></thead><tbody>`;
 
@@ -527,14 +843,17 @@ function render_workspace(frm) {
 
         html += `<tr data-rowname="${row.name}"><td class="rn">${idx + 1}</td>`;
 
-        COLS.forEach(([f,,,align]) => {
+        COLS.forEach(([f,,,align], ci) => {
+            const gi     = _colToGroup[ci];
             const isStk  = f === "nl_is";
+            const isDesc = f === "description";
             const isLand = ["nl_landed_unit_aed","nl_landed_total_aed"].includes(f);
             const isSell = ["nl_unit_sell_aed","nl_total_sell_aed"].includes(f);
             const isFX   = f === "nl_fx_rate";
 
             let cls = "";
             if (isStk)  cls += " stk0";
+            if (isDesc) cls += " nl-desc-cell";
             if (isLand) cls += " land";
             if (isSell) cls += " sell";
             if (isFX)   cls += " fxc";
@@ -547,24 +866,40 @@ function render_workspace(frm) {
                 if (ind) sty += "padding-left:18px;";
             }
 
-            const tip = tips[f] ? ` title="${tips[f]}"` : "";
-            html += `<td class="${cls.trim()}" style="${sty}"${tip}>${cell_val(row, f)}</td>`;
+            const tip    = tips[f] ? ` title="${tips[f]}"` : "";
+            const noC    = isStk ? ` data-no-collapse` : "";
+            const isStub = !isStk && _colStub[gi] === ci;
+            const stubA  = isStub ? ` data-grp-stub="${gi}"` : "";
+            html += `<td class="${cls.trim()}" data-grp="${gi}" data-field="${f}"${noC}${stubA} style="${sty}"${tip}>${cell_val(row, f)}</td>`;
         });
         html += `</tr>`;
     });
 
     html += `<tr class="nl-tot"><td class="rn">&#931;</td>`;
-    COLS.forEach(([f,,,align]) => {
-        const cls = align === "r" ? " r" : align === "c" ? " c" : "";
+    COLS.forEach(([f,,,align], ci) => {
+        const gi     = _colToGroup[ci];
+        const cls    = align === "r" ? " r" : align === "c" ? " c" : "";
+        const isStub = _colStub[gi] === ci;
+        const stubA  = isStub ? ` data-grp-stub="${gi}"` : "";
         let c = "";
         if (f === "nl_is")                   c = `<strong>TOTAL</strong>`;
         else if (f === "nl_exworks_total_aed") c = `<span class="tl">${fmt0(tot_exw)}</span>`;
         else if (f === "nl_landed_total_aed")  c = `<span class="tl">${fmt0(tot_land)}</span>`;
         else if (f === "nl_total_sell_aed")    c = `<span class="ts">${fmt0(tot_sell)}</span>`;
         else if (f === "qty")                  c = `<span class="ts">${fmt0(tot_qty)}</span>`;
-        html += `<td class="${cls.trim()}">${c}</td>`;
+        html += `<td class="${cls.trim()}" data-grp="${gi}"${stubA}>${c}</td>`;
     });
-    html += `</tr></tbody></table></div>`;
+    html += `</tr>`;
+    if (frm.doc.docstatus === 0) {
+        html += `<tr class="nl-add-row-tr">
+            <td class="rn" style="color:#b0bcd0;font-size:14px;">+</td>
+            <td colspan="${COLS.length}" style="color:#b0bcd0;font-style:italic;font-size:10px;
+                padding:7px 14px;border-top:2px dashed #d8e0ea;letter-spacing:.2px;">
+                &#43;&nbsp;Click to add a row&hellip;
+            </td>
+        </tr>`;
+    }
+    html += `</tbody></table></div>`;
 
     html += `
 <div class="nl-fref">
@@ -627,6 +962,18 @@ function render_workspace(frm) {
 
     html += `</div>`;
     $ws.html(html);
+    apply_collapse($ws);
+    if (_ws_fullscreen) {
+        $ws.find("#nl-ws-root").addClass("nl-fs");
+        $("body").addClass("nl-fs-active");
+        $ws.find("#nl-fs-btn").html("&#8855; Exit Full Screen");
+    }
+    if (frm.doc.docstatus !== 0) {
+        $ws.find("#nl-add-btn").hide();
+        $ws.find(".nl-edit-btn").hide();
+        $ws.find(".nl-popup-btn").hide();
+        $ws.find(".nl-del-btn").hide();
+    }
 }
 
 function setup_events(frm) {
@@ -635,22 +982,28 @@ function setup_events(frm) {
     frm.$wrapper.on("click.nl-ws", "#nl-top-activate-btn", () => set_nl_mode(frm, true));
     frm.$wrapper.on("click.nl-ws", "#nl-top-exit-btn",     () => set_nl_mode(frm, false));
 
+    function _excel_url() {
+        const collapsed = get_collapsed();
+        const hidden_gi = Object.keys(collapsed).filter(k => collapsed[k]).map(Number);
+        const params = new URLSearchParams({ quotation: frm.doc.name });
+        if (hidden_gi.length) params.set("hidden_groups", hidden_gi.join(","));
+        return frappe.urllib.get_full_url(
+            `/api/method/newline.newline.api.download_costing_excel?${params}`
+        );
+    }
+
     frm.$wrapper.on("click.nl-ws", "#nl-top-excel-btn", function() {
         if (!frm.doc.name || frm.doc.__islocal) {
             frappe.msgprint("Please save the quotation first before downloading Excel.");
             return;
         }
-        window.location.href = frappe.urllib.get_full_url(
-            `/api/method/newline.newline.api.download_costing_excel?quotation=${encodeURIComponent(frm.doc.name)}`
-        );
+        window.location.href = _excel_url();
     });
 
     frm.$wrapper.on("click.nl-ws", "#nl-add-btn",  () => open_add_dialog(frm));
 
     frm.$wrapper.on("click.nl-ws", "#nl-excel-btn", function() {
-        window.location.href = frappe.urllib.get_full_url(
-            `/api/method/newline.newline.api.download_costing_excel?quotation=${encodeURIComponent(frm.doc.name)}`
-        );
+        window.location.href = _excel_url();
     });
 
     frm.$wrapper.on("click.nl-ws", "#nl-fs-btn", function() {
@@ -660,10 +1013,12 @@ function setup_events(frm) {
             ws.removeClass("nl-fs");
             $("body").removeClass("nl-fs-active");
             btn.html("&#9974; Expand");
+            _ws_fullscreen = false;
         } else {
             ws.addClass("nl-fs");
             $("body").addClass("nl-fs-active");
             btn.html("&#8855; Exit Full Screen");
+            _ws_fullscreen = true;
         }
     });
 
@@ -675,14 +1030,66 @@ function setup_events(frm) {
         arr.html(open ? "&#9658; Show" : "&#9660; Hide");
     });
 
+    frm.$wrapper.on("click.nl-ws", ".nl-grp-th", function() {
+        const gi  = $(this).data("grp");
+        const $ws = frm.$wrapper.find("#nl-ws-root");
+        const isCollapsed = $(this).hasClass("nl-collapsed-hdr");
+        if (isCollapsed) {
+            _do_expand($ws, gi);
+            const state = get_collapsed(); state[gi] = false; save_collapsed(state);
+        } else {
+            _do_collapse($ws, gi);
+            const state = get_collapsed(); state[gi] = true; save_collapsed(state);
+        }
+    });
+
+    frm.$wrapper.on("click.nl-ws", ".nl-del-btn", function(e) {
+        e.stopPropagation();
+        if (frm.doc.docstatus !== 0) return;
+        const rowname = $(this).data("rowname");
+        const row     = (frm.doc.items||[]).find(r => r.name === rowname);
+        const label   = row ? (row.nl_proposed_product || row.nl_is || rowname) : rowname;
+        frappe.confirm(
+            `Delete row <strong>${label}</strong>?`,
+            () => {
+                frappe.model.clear_doc("Quotation Item", rowname);
+                frm.doc.items = (frm.doc.items||[]).filter(r => r.name !== rowname);
+                frm.dirty();
+                render_workspace(frm);
+            }
+        );
+    });
+
     frm.$wrapper.on("click.nl-ws", ".nl-edit-btn", function(e) {
         e.stopPropagation();
-        const row = (frm.doc.items||[]).find(r=>r.name===$(this).data("rowname"));
+        if (frm.doc.docstatus !== 0) return;
+        const $tr = $(this).closest("tr");
+        const row = (frm.doc.items||[]).find(r => r.name === $(this).data("rowname"));
+        if (row) enter_edit_mode(frm, row, $tr);
+    });
+    frm.$wrapper.on("click.nl-ws", ".nl-popup-btn", function(e) {
+        e.stopPropagation();
+        const row = (frm.doc.items||[]).find(r => r.name === $(this).data("rowname"));
         if (row) open_row_dialog(frm, row);
     });
     frm.$wrapper.on("dblclick.nl-ws", "tr[data-rowname]", function() {
-        const row = (frm.doc.items||[]).find(r=>r.name===$(this).data("rowname"));
-        if (row) open_row_dialog(frm, row);
+        if (frm.doc.docstatus !== 0) return;
+        const $tr = $(this);
+        const row = (frm.doc.items||[]).find(r => r.name === $tr.data("rowname"));
+        if (row) enter_edit_mode(frm, row, $tr);
+    });
+    frm.$wrapper.on("click.nl-ws", ".nl-save-inline", function() {
+        const rowname = $(this).data("rowname");
+        const $tr     = $(this).closest("tr");
+        const row     = (frm.doc.items||[]).find(r => r.name === rowname);
+        if (row) collect_and_save(frm, row, $tr);
+    });
+    frm.$wrapper.on("click.nl-ws", ".nl-cancel-inline", function() {
+        render_workspace(frm);
+    });
+
+    frm.$wrapper.on("click.nl-ws", ".nl-add-row-tr", function() {
+        add_row_inline(frm);
     });
 
     const GI_MAP = {
@@ -736,8 +1143,9 @@ function apply_row(frm, row, values) {
 }
 
 function open_row_dialog(frm, row) {
+    const is_draft = frm.doc.docstatus === 0;
     const d = new frappe.ui.Dialog({
-        title: `Edit — ${row.nl_proposed_product || "Row " + (row.nl_is || "")}`,
+        title: `${is_draft ? "Edit" : "View"} — ${row.nl_proposed_product || "Row " + (row.nl_is || "")}`,
         size: "large",
         fields: [
             { fieldtype:"Section Break", label:"Product Identity" },
@@ -799,11 +1207,13 @@ function open_row_dialog(frm, row) {
         ],
         primary_action_label: "Save Row",
         primary_action(values) {
+            if (!is_draft) { d.hide(); return; }
             apply_row(frm, row, values);
             d.hide();
         },
         secondary_action_label: "Delete Row",
         secondary_action() {
+            if (!is_draft) { d.hide(); return; }
             frappe.confirm("Delete this row?", () => {
                 frm.doc.items = (frm.doc.items||[]).filter(r=>r.name!==row.name);
                 frm.dirty(); render_workspace(frm); d.hide();
@@ -811,6 +1221,7 @@ function open_row_dialog(frm, row) {
         },
     });
     d.show();
+    if (!is_draft) d.$wrapper.find(".btn-primary, .btn-secondary").prop("disabled", true).css("opacity", ".5");
     d.$wrapper.find(".modal-dialog").css("max-width","820px");
 }
 
@@ -871,6 +1282,47 @@ frappe.ui.form.on("Quotation", {
     nl_samples_pct(frm)   { (frm.doc.items||[]).forEach(r=>r.nl_sam_pct =flt(frm.doc.nl_samples_pct));    calc_all(frm); render_workspace(frm); },
     nl_lc_pct(frm)        { (frm.doc.items||[]).forEach(r=>r.nl_lc_pct  =flt(frm.doc.nl_lc_pct));         calc_all(frm); render_workspace(frm); },
     nl_default_markup(frm){ (frm.doc.items||[]).forEach(r=>r.nl_markup   =flt(frm.doc.nl_default_markup)); calc_all(frm); render_workspace(frm); },
+
+    before_save(frm) {
+        const $editingRow = frm.$wrapper.find("tr.nl-editing");
+        if (!$editingRow.length) return;
+
+        const rowname = $editingRow.attr("data-rowname");
+        const row     = (frm.doc.items || []).find(r => r.name === rowname);
+        if (!row) return;
+
+        const values = {};
+        $editingRow.find(".nl-ie").each(function() {
+            const f = $(this).data("field");
+            const v = $(this).val();
+            values[f] = NUM_FIELDS.has(f) ? (parseFloat(v) || 0) : v;
+        });
+
+        const MANDATORY = {
+            item_code:           "Item Code (TYPE)",
+            nl_proposed_brand:   "Proposed Brand",
+            nl_proposed_product: "Proposed Product",
+        };
+        const missing = Object.entries(MANDATORY)
+            .filter(([f]) => !String(values[f] || "").trim())
+            .map(([, lbl]) => `<b>${lbl}</b>`);
+        if (missing.length) {
+            frappe.msgprint({ title: "Required Fields", indicator: "red",
+                message: `Row being edited is incomplete. Please fill: ${missing.join(", ")}` });
+            frappe.validated = false;
+            return;
+        }
+
+        if (!(values.qty > 0)) {
+            frappe.msgprint({ title: "Invalid Quantity", indicator: "red",
+                message: "Quantity must be greater than 0." });
+            frappe.validated = false;
+            return;
+        }
+
+        Object.assign(row, values);
+        calc_row(frm, row);
+    },
 });
 
 frappe.ui.form.on("Quotation Item", {

@@ -113,10 +113,16 @@ def _calculate_lines(doc):
 
 
 def _finalize_item_totals(doc):
+	# Snapshot descriptions — ERPNext's calculate_taxes_and_totals may overwrite them
+	_desc = {item.name: item.description for item in (doc.items or [])}
 	for item in (doc.items or []):
 		item.rate   = flt(item.nl_unit_sell_aed)
 		item.amount = flt(item.nl_total_sell_aed)
 	doc.run_method("calculate_taxes_and_totals")
+	# Restore custom descriptions
+	for item in (doc.items or []):
+		if _desc.get(item.name):
+			item.description = _desc[item.name]
 
 
 def _rebuild_brand_summary(doc):

@@ -1,10 +1,25 @@
 import io
+import re
 
 import frappe
 from frappe.utils import flt
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import column_index_from_string, get_column_letter
+
+
+def _strip_html(s):
+	if not s:
+		return ""
+	s = str(s)
+	s = re.sub(r'<br\s*/?>', '\n', s, flags=re.IGNORECASE)
+	s = re.sub(r'</p\s*>', '\n', s, flags=re.IGNORECASE)
+	s = re.sub(r'</div\s*>', '\n', s, flags=re.IGNORECASE)
+	s = re.sub(r'<[^>]+>', '', s)
+	s = (s.replace('&amp;', '&').replace('&lt;', '<').replace('&gt;', '>')
+		  .replace('&nbsp;', ' ').replace('&#39;', "'").replace('&quot;', '"'))
+	s = re.sub(r'\n{3,}', '\n\n', s)
+	return s.strip()
 
 _COLS = [
 	("A",  "nl_is",                   "IS",            36,  False),
@@ -14,7 +29,7 @@ _COLS = [
 	("E",  "nl_location",             "LOCATION",      80,  False),
 	("F",  "nl_proposed_brand",       "BRAND",         80,  False),
 	("G",  "nl_proposed_product",     "PRODUCT",      105,  False),
-	("H",  "nl_proposed_description", "DESCRIPTION",  190,  False),
+	("H",  "description",             "DESCRIPTION",  190,  False),
 	("I",  "nl_price_type",           "PRICE TYPE",    68,  False),
 	("J",  "nl_supplier_brand",       "SUP.BRAND",     80,  False),
 	("K",  "nl_uexw_value",           "U.EXW",         78,  False),
@@ -55,18 +70,18 @@ _COLS = [
 ]
 
 _GROUPS = [
-	("A",  "J",  "PROPOSED PRODUCT DETAILS", "1A1A3E"),
-	("K",  "Q",  "EXWORKS",                  "1E3A5F"),
-	("R",  "T",  "FREIGHT",                  "1A4731"),
-	("U",  "W",  "INSURANCE",                "3D3416"),
-	("X",  "Z",  "CUSTOMS",                  "4A1E1E"),
-	("AA", "AC", "SAMPLES",                  "2D1A4A"),
-	("AD", "AF", "LETTER OF CREDIT",         "1A3A3A"),
-	("AG", "AH", "LANDED AED",               "0A2A4A"),
-	("AI", "AL", "SELLING",                  "1A3D1A"),
-	("AM", "AN", "QTY",                      "3D2000"),
-	("AO", "AO", "RISK",                     "3D1A2A"),
-	("AP", "AS", "SPECIFICATIONS",           "5C1A00"),
+	("A",  "J",  "PROPOSED PRODUCT DETAILS", "C5CAE9", "1A1A3E"),
+	("K",  "Q",  "EXWORKS",                  "BBDEFB", "1E3A5F"),
+	("R",  "T",  "FREIGHT",                  "C8E6C9", "1A4731"),
+	("U",  "W",  "INSURANCE",                "FFF9C4", "3D3416"),
+	("X",  "Z",  "CUSTOMS",                  "FFCDD2", "4A1E1E"),
+	("AA", "AC", "SAMPLES",                  "E1BEE7", "2D1A4A"),
+	("AD", "AF", "LETTER OF CREDIT",         "B2EBF2", "1A3A3A"),
+	("AG", "AH", "LANDED AED",               "BBDEFB", "0A2A4A"),
+	("AI", "AL", "SELLING",                  "C8E6C9", "1A3D1A"),
+	("AM", "AN", "QTY",                      "FFE0B2", "3D2000"),
+	("AO", "AO", "RISK",                     "FCE4EC", "3D1A2A"),
+	("AP", "AS", "SPECIFICATIONS",           "FBE9E7", "5C1A00"),
 ]
 
 _LAST_COL  = "AS"
@@ -141,7 +156,8 @@ def _num_fmt(field):
 	return "@"
 
 
-def _build_workbook(doc):
+def _build_workbook(doc, hidden_groups=None):
+	hidden_groups = set(hidden_groups or [])
 	wb = Workbook()
 	ws = wb.active
 	ws.title = "Costing Sheet"
@@ -176,22 +192,23 @@ def _build_workbook(doc):
 		ws[f"{lv}2"].font  = Font(size=8)
 	ws.row_dimensions[2].height = 18
 
-	for c1, c2, label, color in _GROUPS:
+	for c1, c2, label, bg_color, fg_color in _GROUPS:
 		ws.merge_cells(f"{c1}3:{c2}3") if c1 != c2 else None
 		cell = ws[f"{c1}3"]
 		cell.value     = label
-		cell.fill      = _fill(color)
-		cell.font      = Font(bold=True, color="FFFFFF", size=8)
+		cell.fill      = _fill(bg_color)
+		cell.font      = Font(bold=True, color=fg_color, size=8)
 		cell.alignment = _align("center")
 	ws.row_dimensions[3].height = 20
 
+	col_max = {}
 	for col_l, field, label, width_px, _ in _COLS:
 		cell = ws[f"{col_l}4"]
 		cell.value     = label
-		cell.fill      = _fill("263547")
-		cell.font      = Font(bold=True, color="B8C8E0", size=8)
+		cell.fill      = _fill("2C3E50")
+		cell.font      = Font(bold=True, color="ECF0F1", size=8)
 		cell.alignment = _align("center")
-		ws.column_dimensions[col_l].width = max(width_px / 7.0, 4.5)
+		col_max[col_l] = len(label) + 2
 	ws.row_dimensions[4].height = 18
 
 	ws.freeze_panes = "A5"
@@ -199,11 +216,39 @@ def _build_workbook(doc):
 	DATA_START = 5
 	lines = doc.items or []
 
+	# Direct SQL — get descriptions exactly as stored in DB (bypasses Frappe doc caching)
+	_row_desc = {}
+	for r_ in frappe.db.sql(
+		"SELECT name, description FROM `tabQuotation Item` WHERE parent=%s",
+		doc.name, as_dict=True
+	):
+		_row_desc[r_["name"]] = _strip_html(r_.get("description") or "")
+
+	# Fallback: item master descriptions
+	_item_codes = list({l.item_code for l in lines if l.item_code})
+	_item_desc  = {}
+	if _item_codes:
+		placeholders = ", ".join(["%s"] * len(_item_codes))
+		for r_ in frappe.db.sql(
+			f"SELECT name, description FROM `tabItem` WHERE name IN ({placeholders})",
+			_item_codes, as_dict=True
+		):
+			_item_desc[r_["name"]] = _strip_html(r_.get("description") or "")
+
 	for idx, line in enumerate(lines):
 		r  = DATA_START + idx
 		rt = line.nl_row_type or "Main Item"
 		bg = _ROW_BG.get(rt, "FFFFFF")
-		ws.row_dimensions[r].height = 16
+
+		# Row description → item master fallback
+		desc_plain = _row_desc.get(line.name, "")
+		if not desc_plain and line.item_code:
+			desc_plain = _item_desc.get(line.item_code, "")
+		if desc_plain:
+			n_lines = desc_plain.count('\n') + max(1, len(desc_plain) // 45)
+			ws.row_dimensions[r].height = max(14, min(n_lines * 12, 130))
+		else:
+			ws.row_dimensions[r].height = 16
 
 		for col_l, field, _lbl, _w, is_formula in _COLS:
 			cell = ws[f"{col_l}{r}"]
@@ -212,7 +257,15 @@ def _build_workbook(doc):
 				cell.value = _formula(field, r)
 			else:
 				val = getattr(line, field, None)
+				if field == "description":
+					val = desc_plain
 				cell.value = val if val is not None else ""
+
+			if isinstance(cell.value, str) and cell.value and not cell.value.startswith('='):
+				for part in cell.value.split('\n'):
+					w = len(part) + 2
+					if w > col_max.get(col_l, 0):
+						col_max[col_l] = w
 
 			cell.number_format = _num_fmt(field)
 
@@ -246,6 +299,23 @@ def _build_workbook(doc):
 				cell.border = _left_accent(accent)
 			else:
 				cell.border = _thin()
+
+	# Build group index → list of column letters
+	_grp_cols = {}
+	for gi, (c1, c2, _lbl, _bg, _fg) in enumerate(_GROUPS):
+		i1 = column_index_from_string(c1)
+		i2 = column_index_from_string(c2)
+		_grp_cols[gi] = [get_column_letter(i) for i in range(i1, i2 + 1)]
+
+	for col_l, field, _lbl, width_px, _ in _COLS:
+		min_w = max(width_px / 9.0, 5)
+		cap   = 44 if field == "description" else 52
+		ws.column_dimensions[col_l].width = min(max(col_max.get(col_l, min_w), min_w), cap)
+
+	# Hide columns belonging to collapsed groups
+	for gi in hidden_groups:
+		for col_l in _grp_cols.get(gi, []):
+			ws.column_dimensions[col_l].hidden = True
 
 	N     = DATA_START + len(lines) - 1
 	tot_r = N + 1
@@ -351,10 +421,16 @@ def _build_workbook(doc):
 
 
 @frappe.whitelist()
-def download_costing_excel(quotation):
+def download_costing_excel(quotation, hidden_groups=None):
 	doc = frappe.get_doc("Quotation", quotation)
 	frappe.has_permission("Quotation", doc=doc, throw=True)
-	wb  = _build_workbook(doc)
+	hg = []
+	if hidden_groups:
+		try:
+			hg = [int(x) for x in str(hidden_groups).split(",") if x.strip().isdigit()]
+		except Exception:
+			hg = []
+	wb  = _build_workbook(doc, hidden_groups=hg)
 	buf = io.BytesIO()
 	wb.save(buf)
 	frappe.response["filename"]    = f"NL_Costing_{doc.name}.xlsx"
